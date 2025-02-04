@@ -22,7 +22,7 @@ class _AppNavigationState extends State<AppNavigation> {
         const DashboardScreen(),
         const SearchScreen(),
         const ScanScreen(),
-        const ShoppingListScreen(),
+        ShoppingListScreen(),
         SettingsScreen(settingsController: settingsController),
       ];
 
