@@ -4,10 +4,9 @@ class CustomCard extends StatelessWidget {
   final String? overhead;
   final String title;
   final String? subtitle;
-  
+
   final VoidCallback? onTap;
 
-  //for future shopping list implementation
   final bool showCheckbox;
   final bool showDeleteButton;
   final bool showAddButton;
@@ -50,14 +49,16 @@ class CustomCard extends StatelessWidget {
                     if (overhead != null) ...[
                       Text(
                         overhead!,
-                        style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Colors.grey),
+                        overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 2),
                     ],
-                    Text(
-                      title,
-                      style: Theme.of(context).textTheme.titleMedium,
-                      overflow: TextOverflow.ellipsis,
+                    Expanded(
+                      child: Text(
+                        title,
+                        style: Theme.of(context).textTheme.titleMedium,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                     if (subtitle != null) ...[
                       const SizedBox(height: 4),
