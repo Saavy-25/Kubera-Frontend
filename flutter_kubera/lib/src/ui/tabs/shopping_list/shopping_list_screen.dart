@@ -19,7 +19,7 @@ class ShoppingListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Products')),
+      appBar: AppBar(title: const Text('Kubera')),
       body: ListView.builder(
         itemCount: items.length,
         itemBuilder: (context, index) {
