@@ -7,7 +7,7 @@ import 'package:flutter_kubera/src/models/test.dart';
 import 'package:http_parser/http_parser.dart';
 
 class FlaskService {
-  // when running on physical device use the ip address of your machine
+  // when running on physical device use the ip address of the machine running the server (i.e your laptop )
   static const String baseUrl = 'http://10.188.80.234:5000/flutter';
 
   // when running on emulator use the following
