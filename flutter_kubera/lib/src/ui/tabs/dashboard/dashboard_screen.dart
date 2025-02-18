@@ -23,7 +23,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Dashboard")),
+      appBar: AppBar(title: const Text("Kubera")),
       body: Center(
         child: FutureBuilder<Test>(
           future: futureTest,

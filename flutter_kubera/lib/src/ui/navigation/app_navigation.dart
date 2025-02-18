@@ -20,7 +20,7 @@ class _AppNavigationState extends State<AppNavigation> {
 
   static List<Widget> _widgetOptions(SettingsController settingsController) => [
         const DashboardScreen(),
-        const SearchScreen(),
+        SearchScreen(),
         const ScanScreen(),
         ShoppingListScreen(),
         SettingsScreen(settingsController: settingsController),
@@ -44,7 +44,7 @@ class _AppNavigationState extends State<AppNavigation> {
           BottomNavigationBarItem(icon: Icon(Icons.dashboard), label: 'Dashboard'),
           BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
           BottomNavigationBarItem(icon: Icon(Icons.camera_alt), label: 'Scan'),
-          BottomNavigationBarItem(icon: Icon(Icons.list), label: 'Shopping'),
+          BottomNavigationBarItem(icon: Icon(Icons.list), label: 'Lists'),
           BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
         ],
         currentIndex: _selectedIndex,
