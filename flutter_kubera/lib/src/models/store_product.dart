@@ -1,7 +1,7 @@
 
 class StoreProduct {
   final String? pk;
-  final int? unit;
+  final String? unit;
   final String? genericPk;
   final double price;
   final DateTime date;

@@ -38,7 +38,9 @@ class FlaskService {
       final response = await request.send();
       if (response.statusCode == 200) {
         final responseBody = await response.stream.bytesToString();
-        return Receipt.fromJson(jsonDecode(responseBody));
+        final jsonResponse = jsonDecode(responseBody);
+        final receiptJson = jsonResponse['receipt'];
+        return Receipt.fromJson(receiptJson);
       } else {
         throw Exception('Failed to post data: ${response.statusCode}');
       }
