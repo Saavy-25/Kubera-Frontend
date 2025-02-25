@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_kubera/src/ui/tabs/scan/receipt_data_confirmation';
+import 'package:flutter_kubera/src/models/receipt.dart';
+import 'package:flutter_kubera/src/ui/tabs/scan/receipt_data_confirmation.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
@@ -39,17 +40,9 @@ class _ScanScreenState extends State<ScanScreen> {
   }
 
   // Process the image using Flask API
-  Future<void> _processImage(File image) async {
-    // Implement the logic to send the image to your Flask API
-    // and handle the response.
-
-    final response = await FlaskService().processReceipt(image);
-
-    if (response.statusCode == 200) {
-      print('Image uploaded successfully');
-    } else {
-      print('Failed to upload image');
-    }
+  Future<Receipt> _processImage(File image) async {
+    final processedReceipt = await FlaskService().processReceipt(image);
+    return processedReceipt;
   }
 
   @override
@@ -115,16 +108,19 @@ class _ScanScreenState extends State<ScanScreen> {
                 child: SizedBox(
                   width: double.infinity,
                   child: ElevatedButton.icon(
-                    onPressed: () { //Go to receipt confirmation page
+                    onPressed: () async { //Go to receipt confirmation page
                       if (_image != null) {
-                        _processImage(_image!);
+                        final receipt = await _processImage(_image!);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ReceiptDataConfirmationScreen(receipt: receipt),
+                          ),
+                        );
                       } else {
+                      // TODO: Show error message
                         print('No image selected');
                       }
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const ReceiptDataConfirmationScreen()),
-                      );
                     },
                     label: const Text('Proceed'),
                     icon: const Icon(Icons.arrow_forward),

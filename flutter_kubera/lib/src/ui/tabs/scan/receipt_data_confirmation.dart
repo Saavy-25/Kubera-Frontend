@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_kubera/src/models/receipt.dart';
 
 class ReceiptDataConfirmationScreen extends StatelessWidget {
-  const ReceiptDataConfirmationScreen({super.key});
+  final Receipt receipt;
+
+  const ReceiptDataConfirmationScreen({super.key, required this.receipt});
 
   @override
   Widget build(BuildContext context) {
@@ -17,6 +20,31 @@ class ReceiptDataConfirmationScreen extends StatelessWidget {
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
+            ),
+
+            // Display receipt data
+            const SizedBox(height: 16),
+            Text('Store Name: ${receipt.storeName}'),
+            Text('Date: ${receipt.date}'),
+            const SizedBox(height: 16),
+            Text(
+              'Products:',
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+            const SizedBox(height: 8),
+            Expanded(
+              child: ListView.builder(
+                itemCount: receipt.products.length,
+                itemBuilder: (context, index) {
+                  final product = receipt.products[index];
+                  return ListTile(
+                    title: Text(product.lineItem),
+                    subtitle: Text('Price: \$${product.price}'),
+                  );
+                },
+              ),
             ),
 
             Padding(

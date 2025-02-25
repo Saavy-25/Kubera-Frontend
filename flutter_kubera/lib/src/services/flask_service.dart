@@ -1,6 +1,7 @@
 
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter_kubera/src/models/receipt.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_kubera/src/models/test.dart';
 
@@ -8,7 +9,7 @@ import 'package:http_parser/http_parser.dart';
 
 class FlaskService {
   // when running on physical device use the ip address of the machine running the server (i.e your laptop )
-  static const String baseUrl = 'http://10.188.80.234:5000/flutter';
+  static const String baseUrl = 'http://10.188.80.15:5000/flutter';
 
   // when running on emulator use the following
   // static const String baseUrl = 'http://localhost:5000/flutter';
@@ -22,7 +23,7 @@ class FlaskService {
     }
   }
 
-  Future<http.StreamedResponse> processReceipt(File image) async {
+  Future<Receipt> processReceipt(File image) async {
     final request = http.MultipartRequest(
       'POST',
       Uri.parse('$baseUrl/process_receipt'),
@@ -35,7 +36,12 @@ class FlaskService {
 
     try {
       final response = await request.send();
-      return response;
+      if (response.statusCode == 200) {
+        final responseBody = await response.stream.bytesToString();
+        return Receipt.fromJson(jsonDecode(responseBody));
+      } else {
+        throw Exception('Failed to post data: ${response.statusCode}');
+      }
     } catch (e) {
       throw Exception('Failed to post data: $e');
     }
