@@ -1,10 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_kubera/src/models/receipt.dart';
+import 'package:flutter_kubera/src/services/flask_service.dart';
 
 class ReceiptDataConfirmationScreen extends StatelessWidget {
   final Receipt receipt;
 
   const ReceiptDataConfirmationScreen({super.key, required this.receipt});
+
+  Future<void> _confirmReceipt(BuildContext context, Receipt receipt) async {
+    try {
+      await FlaskService().postReceipt(receipt);
+
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Success'),
+            content: const Text('Receipt added to database'),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop(); // Close the dialog
+                  Navigator.of(context).pop(); // Go back to the previous screen
+                },
+              ),
+            ],
+          );
+        },
+      );
+    } catch (e) {
+      print('Failed to post receipt: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +95,7 @@ class ReceiptDataConfirmationScreen extends StatelessWidget {
                   Expanded(
                     child: ElevatedButton.icon(
                       onPressed: () { //Go to scan screen
-                        Navigator.pop(context);
+                        _confirmReceipt(context, this.receipt);
                       },
                       label: const Text('Confirm'),
                       icon: const Icon(Icons.check),
