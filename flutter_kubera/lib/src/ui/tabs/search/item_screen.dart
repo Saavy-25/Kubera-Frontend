@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/card.dart';
+import 'package:flutter_kubera/src/services/flask_service.dart';
 
 class ItemScreen extends StatelessWidget {
   final String itemId;
@@ -12,31 +13,14 @@ class ItemScreen extends StatelessWidget {
   });
 
   //Replace with backend call
-  Future<List<Map<String, dynamic>>> _fetchProducts(String itemId) async {
-    await Future.delayed(const Duration(seconds: 2));
-
-    return [
-      {
-        'product_id': 'store1#Butter#1',
-        'store': 'Store 1',
-        'product_name': 'Butter',
-        'unit': 'kg',
-        'prices': [
-          {'price': 4.99, 'timestamp': '2025-01-01'},
-          {'price': 5.49, 'timestamp': '2025-02-01'},
-        ],
-      },
-      {
-        'product_id': 'store2#Milk#2',
-        'store': 'Store 2',
-        'product_name': 'Milk',
-        'unit': 'liter',
-        'prices': [
-          {'price': 1.99, 'timestamp': '2025-01-01'},
-          {'price': 2.19, 'timestamp': '2025-02-01'},
-        ],
-      },
-    ];
+  Future<List<Map<String, dynamic>>> fetchProducts(List<String> productIds) async {
+    final flaskService = FlaskService();
+    try {
+      final products = await flaskService.fetchStoreProducts([itemId]);
+      return products.map((product) => product.toJson()).toList();
+    } catch (e) {
+      throw Exception('Failed to fetch products: $e');
+    }
   }
 
   @override
@@ -44,7 +28,7 @@ class ItemScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text(itemName)),
       body: FutureBuilder<List<Map<String, dynamic>>>(
-        future: _fetchProducts(itemId),
+        future: fetchProducts(itemId),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());

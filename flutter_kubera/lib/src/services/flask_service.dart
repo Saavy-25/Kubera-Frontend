@@ -2,6 +2,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter_kubera/src/models/receipt.dart';
+import 'package:flutter_kubera/src/models/store_product.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_kubera/src/models/test.dart';
 import 'package:flutter_kubera/src/models/generic_item.dart';
@@ -72,6 +73,17 @@ class FlaskService {
       return List<GenericItem>.from(data.map((item) => GenericItem.fromJson(item)));
     } else {
       throw Exception('Failed to fetch search results');
+    }
+  }
+
+  Future<List<StoreProduct>> fetchStoreProducts(List<String> ids) async {
+    final response = await http.post(Uri.parse('$baseUrl/get_storeProducts'), headers: {'Content-Type': 'application/json'}, body: jsonEncode({'productIds': ids}));
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(response.body);
+      return List<StoreProduct>.from(data.map((item) => StoreProduct.fromJson(item)));
+    } else {
+      throw Exception('Failed to fetch store products');
     }
   }
 }
