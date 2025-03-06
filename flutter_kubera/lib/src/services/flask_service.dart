@@ -77,13 +77,30 @@ class FlaskService {
   }
 
   Future<List<StoreProduct>> fetchStoreProducts(List<String> ids) async {
-    final response = await http.post(Uri.parse('$baseUrl/get_storeProducts'), headers: {'Content-Type': 'application/json'}, body: jsonEncode({'productIds': ids}));
+    if (ids.isEmpty) return [];
 
+    final response = await http.post(
+      Uri.parse('$baseUrl/get_storeProducts'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'productIds': ids}),
+    );
+
+    final data = jsonDecode(response.body);
+    
     if (response.statusCode == 200) {
-      final List<dynamic> data = jsonDecode(response.body);
-      return List<StoreProduct>.from(data.map((item) => StoreProduct.fromJson(item)));
-    } else {
-      throw Exception('Failed to fetch store products');
+      if (data is List) {
+        return List<StoreProduct>.from(data.map((item) => StoreProduct.fromJson(item)));
+      } else {
+        return [];
+      }
+    } 
+    
+    else {
+      if (data['error'] != null) {
+          throw Exception('Failed to fetch store products: ${data['error']}');
+        } else {
+          throw Exception('Failed to fetch store products: Unknown error');
+        }
     }
   }
 }

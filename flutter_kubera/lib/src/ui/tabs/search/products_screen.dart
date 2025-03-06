@@ -1,23 +1,25 @@
 import 'package:flutter/material.dart';
 import '../../../core/card.dart';
 import 'package:flutter_kubera/src/services/flask_service.dart';
+import 'package:flutter_kubera/src/models/store_product.dart';
 
-class ItemScreen extends StatelessWidget {
+class ProductsScreen extends StatelessWidget {
   final String itemId;
   final String itemName;
+  final List<String> productIds;
 
-  const ItemScreen({
+  const ProductsScreen({
     super.key,
     required this.itemId,
     required this.itemName,
+    required this.productIds,
   });
 
   //Replace with backend call
-  Future<List<Map<String, dynamic>>> fetchProducts(List<String> productIds) async {
+  Future<List<StoreProduct>> fetchProducts(List<String> productIds) async {
     final flaskService = FlaskService();
     try {
-      final products = await flaskService.fetchStoreProducts([itemId]);
-      return products.map((product) => product.toJson()).toList();
+      return await flaskService.fetchStoreProducts(productIds);
     } catch (e) {
       throw Exception('Failed to fetch products: $e');
     }
@@ -27,8 +29,8 @@ class ItemScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(itemName)),
-      body: FutureBuilder<List<Map<String, dynamic>>>(
-        future: fetchProducts(itemId),
+      body: FutureBuilder<List<StoreProduct>>(
+        future: fetchProducts(productIds),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -40,6 +42,11 @@ class ItemScreen extends StatelessWidget {
 
           if (snapshot.hasData) {
             var products = snapshot.data!;
+
+            if (products.isEmpty) {
+              return const Center(child: Text('No product of this type has been submitted'));
+            }
+
             return Padding(
               padding: const EdgeInsets.all(16.0),
               child: ListView(
@@ -47,10 +54,9 @@ class ItemScreen extends StatelessWidget {
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: CustomCard(
-                      overhead: product['store'],
-                      title: '\$${product['prices'][0]['price']}',
-                      subtitle: product['product_name'],
-                      showAddButton: true,
+                      overhead: product.storeName ?? '',
+                      title: product.productName,
+                      subtitle: product.storeAddress ?? '',
                       onAdd: () {
                         //TODO navigate to product page
                       },
@@ -59,9 +65,11 @@ class ItemScreen extends StatelessWidget {
                 }).toList(),
               ),
             );
+          } 
+          
+          else {
+            return const Center(child: Text('No product of this type has been submitted.'));
           }
-
-          return const Center(child: Text('No product details available.'));
         },
       ),
     );

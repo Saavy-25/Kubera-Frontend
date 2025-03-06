@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_kubera/src/core/card.dart';
 import 'package:flutter_kubera/src/services/flask_service.dart';
 import 'package:flutter_kubera/src/models/generic_item.dart';
-import 'item_screen.dart';
+import 'products_screen.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -35,11 +35,11 @@ class SearchScreenState extends State<SearchScreen> {
     setState(() => isLoading = false);
   }
 
-  void _navigateToItemPage(BuildContext context, String itemId, String itemName) {
+  void _navigateToItemPage(BuildContext context, String itemId, String itemName, List<String> productIds) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ItemScreen(itemId: itemId, itemName: itemName),
+        builder: (context) => ProductsScreen(itemId: itemId, itemName: itemName, productIds: productIds),
       ),
     );
   }
@@ -77,7 +77,7 @@ class SearchScreenState extends State<SearchScreen> {
                             return ListTile(
                               title: Text(item.genericItem ?? "Unknown Item"),
                               subtitle: Text("Category: ${item.category}"),
-                              onTap: () => _navigateToItemPage(context, item.pk ?? "", item.genericItem ?? ""),
+                              onTap: () => _navigateToItemPage(context, item.pk ?? "", item.genericItem ?? "", item.productIds ?? []),
                             );
                           },
                         ),

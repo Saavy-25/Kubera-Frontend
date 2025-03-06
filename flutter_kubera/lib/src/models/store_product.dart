@@ -1,6 +1,6 @@
 class PricesTimes {
   final double? price;
-  final DateTime? timestamp;
+  final String? timestamp; // Converting Mongo's Date to String for now
 
   PricesTimes({
     required this.price,
@@ -13,7 +13,7 @@ class StoreProduct {
   final String? unit;
   final String genericPk;
   final List<PricesTimes>? pricesTimes;
-  final String? lineItem;
+  final String lineItem;
   final List<String>? genericMatches;
   final String productName;
   final String? genericName;
@@ -25,7 +25,7 @@ class StoreProduct {
     this.unit,
     required this.genericPk,
     this.pricesTimes,
-    this.lineItem,
+    required this.lineItem,
     this.genericMatches,
     required this.productName,
     this.genericName,
@@ -45,7 +45,7 @@ class StoreProduct {
       pricesTimes: (json['pricesTimes'] as List<dynamic>?)
           ?.map((price) => PricesTimes(
         price: (price as List<dynamic>)[0] as double?,
-        timestamp: DateTime.parse((price[1] as String)),
+        timestamp: (price[1] as String),
           ))
           .toList() ?? [],
       lineItem: json['lineItem'] ?? '',
@@ -62,7 +62,7 @@ class StoreProduct {
       '_id': pk,
       'unit': unit,
       'genericPk': genericPk,
-      'pricesTimes': pricesTimes?.map((price) => [price.price, price.timestamp?.toIso8601String()]).toList(),
+      'pricesTimes': pricesTimes?.map((price) => [price.price, price.timestamp?.toString()]).toList(),
       'lineItem': lineItem,
       'generic_matches': genericMatches,
       'productName': productName,
