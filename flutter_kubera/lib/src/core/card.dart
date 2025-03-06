@@ -53,12 +53,10 @@ class CustomCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 2),
                     ],
-                    Expanded(
-                      child: Text(
-                        title,
-                        style: Theme.of(context).textTheme.titleMedium,
-                        overflow: TextOverflow.ellipsis,
-                      ),
+                    Text(
+                      title,
+                      style: Theme.of(context).textTheme.titleMedium,
+                      overflow: TextOverflow.ellipsis,
                     ),
                     if (subtitle != null) ...[
                       const SizedBox(height: 4),
