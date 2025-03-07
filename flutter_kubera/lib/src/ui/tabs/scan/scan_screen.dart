@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_kubera/src/core/card.dart';
+import 'package:flutter_kubera/src/core/error_dialog.dart';
 import 'package:flutter_kubera/src/models/receipt.dart';
 import 'package:flutter_kubera/src/ui/tabs/scan/receipt_data_confirmation.dart';
 import 'package:image_picker/image_picker.dart';
@@ -16,6 +18,7 @@ class ScanScreen extends StatefulWidget {
 class _ScanScreenState extends State<ScanScreen> {
   File? _image;
   final ImagePicker _picker = ImagePicker();
+  bool _isLoading = false;
 
   //Take photo with camera
   Future<void> _takePicture() async {
@@ -41,8 +44,24 @@ class _ScanScreenState extends State<ScanScreen> {
 
   // Process the image using Flask API
   Future<Receipt> _processImage(File image) async {
+    setState(() {
+      _isLoading = true;
+    });
     final processedReceipt = await FlaskService().processReceipt(image);
+    setState(() {
+      _isLoading = false;
+    });
     return processedReceipt;
+  }
+
+  // Show error dialog
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return ErrorDialog(message: message);
+      },
+    );
   }
 
   @override
@@ -107,10 +126,33 @@ class _ScanScreenState extends State<ScanScreen> {
                 padding: const EdgeInsets.only(top: 10.0),
                 child: SizedBox(
                   width: double.infinity,
-                  child: ElevatedButton.icon(
+                  child: _isLoading
+                        ? const Center(child: CircularProgressIndicator())
+                        : ElevatedButton.icon(
                     onPressed: () async { //Go to receipt confirmation page
                       if (_image != null) {
-                        final receipt = await _processImage(_image!);
+                        // final receipt = await _processImage(_image!);
+                        final receipt = Receipt.fromJson(
+                          {
+                            "pk":"None",
+                            "sk":"None",
+                            "store_name":"TRADER JOE'S",
+                            "date":"2025-01-30",
+                            "products":[
+                              {
+                                "pk":"None",
+                                "unit":"None",
+                                "generic_pk":"None",
+                                "price":5.49,
+                                "date":"2025-01-30T00:00:00.000",
+                                "line_item":"YOGURT GREEK PLAIN 32 OZ",
+                                "generic_matches":["Plain Yogurt","Greek Yogurt", "Yogurt"],
+                                "product_name":"Plain Greek Yogurt",
+                                "generic_name":"None"
+                              },
+                            ]
+                          }
+                        );
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -118,8 +160,7 @@ class _ScanScreenState extends State<ScanScreen> {
                           ),
                         );
                       } else {
-                      // TODO: Show error message
-                        print('No image selected');
+                        _showErrorDialog('No image selected. Please select an image first.');
                       }
                     },
                     label: const Text('Proceed'),
@@ -129,7 +170,7 @@ class _ScanScreenState extends State<ScanScreen> {
                     ),
                   ),
                 ),
-              ),
+              ),              
           ],
         ),
       ),

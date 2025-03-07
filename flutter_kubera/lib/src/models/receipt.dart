@@ -5,7 +5,7 @@ class Receipt {
   final String? sk;
   final String storeName;
   final String date;
-  final List<StoreProduct> products;
+  List<StoreProduct> products;
 
   Receipt({
     required this.pk,

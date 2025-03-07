@@ -3,12 +3,12 @@ class StoreProduct {
   final String? pk;
   final String? unit;
   final String? genericPk;
-  final double price;
+  double price;
   final DateTime date;
-  final String lineItem;
+  String lineItem;
   final List<String>? genericMatches;
-  final String? productName;
-  final String? genericName;
+  String? productName;
+  String? genericName;
 
   StoreProduct({
     required this.pk,
@@ -22,7 +22,19 @@ class StoreProduct {
     required this.genericName,
   });
 
+  // Method to update the fields
+  void updateLineItem(String newLineItem) {
+    lineItem = newLineItem;
+  }
 
+  void updateProductName(String newProductName) {
+    productName = newProductName;
+  }
+
+  void updatePrice(double newPrice) {
+    price = newPrice;
+  }
+  
   factory StoreProduct.fromJson(Map<String, dynamic> json) {
     var genericMatchesFromJson = json['generic_matches'] as List? ?? [];
     var genericMatches = genericMatchesFromJson.map((genericMatch) => genericMatch.toString()).toList();
