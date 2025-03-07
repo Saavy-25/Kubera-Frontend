@@ -4,6 +4,7 @@ class Receipt {
   final String? pk;
   final String? sk;
   final String storeName;
+  final String storeAddress;
   final String date;
   final List<StoreProduct> products;
 
@@ -11,6 +12,7 @@ class Receipt {
     required this.pk,
     required this.sk,
     required this.storeName,
+    required this.storeAddress,
     required this.date,
     required this.products,
   });
@@ -23,6 +25,7 @@ class Receipt {
       pk: json['pk'],
       sk: json['sk'],
       storeName: json['store_name'],
+      storeAddress: json['store_address'],
       date: json['date'],
       products: productList,
     );
@@ -33,6 +36,7 @@ class Receipt {
       'pk': pk,
       'sk': sk,
       'store_name': storeName,
+      'store_address': storeAddress,
       'date': date,
       'products': products.map((product) => product.toJson()).toList(),
     };

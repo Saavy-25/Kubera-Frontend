@@ -1,22 +1,28 @@
 
+import 'dart:ffi';
+
 class StoreProduct {
   final String? pk;
-  final String? unit;
   final String? genericPk;
-  final double price;
-  final DateTime date;
+  // final DateTime date; THIS IS NOW STORES AT THE RECEIPT LEVEL
   final String lineItem;
+  final Int? count;
+  final String? unit;
+  final double unitPrice;
+  final double totalPrice;
   final List<String>? genericMatches;
   final String? productName;
   final String? genericName;
 
   StoreProduct({
     required this.pk,
-    required this.unit,
     required this.genericPk,
-    required this.price,
-    required this.date,
+    // required this.date,
     required this.lineItem,
+    required this.count,
+    required this.unit,
+    required this.unitPrice,
+    required this.totalPrice,
     required this.genericMatches,
     required this.productName,
     required this.genericName,
@@ -29,11 +35,13 @@ class StoreProduct {
 
     return StoreProduct(
       pk: json['pk'],
-      unit: json['unit'],
       genericPk: json['generic_pk'],
-      price: json['price']?.toDouble(),
-      date: DateTime.parse(json['date']),
+      // date: DateTime.parse(json['date']),
       lineItem: json['line_item'],
+      count: json['count']?.toInt(),
+      unit: json['unit'],
+      unitPrice: json['unitPrice']?.toDouble(),
+      totalPrice: json['totalPrice']?.toDouble(),
       genericMatches: genericMatches,
       productName: json['product_name'],
       genericName: json['generic_name'],
@@ -43,11 +51,13 @@ class StoreProduct {
   Map<String, dynamic> toJson() {
     return {
       'pk': pk,
-      'unit': unit,
       'generic_pk': genericPk,
-      'price': price,
-      'date': date.toIso8601String(),
+      // 'date': date.toIso8601String(),
       'line_item': lineItem,
+      'count': count,
+      'unit': unit,
+      'unit_price': unitPrice,
+      'total_price': totalPrice,
       'generic_matches': genericMatches,
       'product_name': productName,
       'generic_name': genericName,
