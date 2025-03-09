@@ -1,22 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_kubera/src/core/card.dart';
+import 'package:flutter_kubera/src/services/flask_service.dart';
+import 'package:flutter_kubera/src/models/generic_item.dart';
 import 'item_screen.dart';
 
-class SearchScreen extends StatelessWidget {
-  SearchScreen({super.key});
+class SearchScreen extends StatefulWidget {
+  const SearchScreen({super.key});
 
-  final Map<String, List<Map<String, String>>> categoryItems = {
-    'Produce': [
-      {'item_id': '1', 'item_name': 'Apple'},
-      {'item_id': '2', 'item_name': 'Banana'},
-      {'item_id': '3', 'item_name': 'Carrot'},
-    ],
-    'Dairy': [
-      {'item_id': '4', 'item_name': 'Butter'},
-      {'item_id': '5', 'item_name': 'Milk'},
-      {'item_id': '6', 'item_name': 'Cheese'},
-    ],
-  };
+  @override
+  SearchScreenState createState() => SearchScreenState();
+}
+
+class SearchScreenState extends State<SearchScreen> {
+  final FlaskService flaskService = FlaskService();
+  List<GenericItem> searchResults = [];
+  bool isLoading = false;
+  TextEditingController searchController = TextEditingController();
+
+  void fetchSearchResults(String query) async {
+    if (query.isEmpty) {
+      setState(() => searchResults = []);
+      return;
+    }
+
+    setState(() => isLoading = true);
+
+    try {
+      List<GenericItem> results = await flaskService.searchItems(query);
+      setState(() => searchResults = results);
+    } catch (e) {
+      print("Error: $e");
+    }
+
+    setState(() => isLoading = false);
+  }
 
   void _navigateToItemPage(BuildContext context, String itemId, String itemName) {
     Navigator.push(
@@ -36,6 +53,8 @@ class SearchScreen extends StatelessWidget {
         child: Column(
           children: [
             TextField(
+              controller: searchController,
+              onSubmitted: fetchSearchResults,
               decoration: InputDecoration(
                 hintText: "Search",
                 prefixIcon: const Icon(Icons.search),
@@ -47,44 +66,23 @@ class SearchScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 10),
-            Expanded(
-              child: ListView(
-                children: categoryItems.entries.map((entry) {
-                  String category = entry.key;
-                  List<Map<String, String>> items = entry.value;
-
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: Text(
-                          category,
+            isLoading
+                ? CircularProgressIndicator()
+                : searchResults.isNotEmpty
+                    ? Expanded(
+                        child: ListView.builder(
+                          itemCount: searchResults.length,
+                          itemBuilder: (context, index) {
+                            final item = searchResults[index];
+                            return ListTile(
+                              title: Text(item.genericItem ?? "Unknown Item"),
+                              subtitle: Text("Category: ${item.category}"),
+                              onTap: () => _navigateToItemPage(context, item.pk ?? "", item.genericItem ?? ""),
+                            );
+                          },
                         ),
-                      ),
-                      GridView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3,
-                          crossAxisSpacing: 8.0,
-                          mainAxisSpacing: 8.0,
-                          childAspectRatio: 2,
-                        ),
-                        itemCount: items.length,
-                        itemBuilder: (context, index) {
-                          var item = items[index];
-                          return CustomCard(
-                            title: item['item_name']!,
-                            onTap: () => _navigateToItemPage(context, item['item_id']!, item['item_name']!),
-                          );
-                        },
-                      ),
-                    ],
-                  );
-                }).toList(),
-              ),
-            ),
+                      )
+                    : Expanded(child: Center(child: Text("No results found"))),
           ],
         ),
       ),

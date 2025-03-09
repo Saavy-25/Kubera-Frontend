@@ -42,7 +42,7 @@ class ItemScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('$itemName')),
+      appBar: AppBar(title: Text(itemName)),
       body: FutureBuilder<List<Map<String, dynamic>>>(
         future: _fetchProducts(itemId),
         builder: (context, snapshot) {

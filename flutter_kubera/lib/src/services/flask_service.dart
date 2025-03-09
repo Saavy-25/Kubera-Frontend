@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:flutter_kubera/src/models/receipt.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_kubera/src/models/test.dart';
-
+import 'package:flutter_kubera/src/models/generic_item.dart';
 import 'package:http_parser/http_parser.dart';
 
 class FlaskService {
@@ -59,6 +59,19 @@ class FlaskService {
 
     if (response.statusCode != 200) {
       throw Exception('Failed to send receipt: ${response.statusCode}');
+    }
+  }
+
+  Future<List<GenericItem>> searchItems(String query) async {
+    if (query.isEmpty) return [];
+
+    final response = await http.get(Uri.parse('$baseUrl/search_generic?query=$query'));
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(response.body);
+      return List<GenericItem>.from(data.map((item) => GenericItem.fromJson(item)));
+    } else {
+      throw Exception('Failed to fetch search results');
     }
   }
 }
