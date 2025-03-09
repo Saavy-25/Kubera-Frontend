@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_kubera/src/core/card.dart';
 import 'package:flutter_kubera/src/core/error_dialog.dart';
 import 'package:flutter_kubera/src/models/receipt.dart';
 import 'package:flutter_kubera/src/ui/tabs/scan/receipt_data_confirmation.dart';
