@@ -7,7 +7,7 @@ class StoreProduct {
   final String? storeName;
   final List<String>? recentPrices; // TODO: Change to List<RecentPrice> once Vy's changes are merged in
   String storeProductName;
-  final List<String>? genericMatches;
+  final List<String> genericMatches;
   final String? genericMatchId;
   String? genericMatch;
 
@@ -19,7 +19,7 @@ class StoreProduct {
     this.storeName,
     this.recentPrices,
     required this.storeProductName,
-    this.genericMatches,
+    required this.genericMatches,
     this.genericMatchId,
     this.genericMatch,
   });
@@ -35,6 +35,10 @@ class StoreProduct {
 
   void updatePrice(double totalPrice) {
     totalPrice = totalPrice;
+  }
+
+  void updateGenericMatch(String newGenericMatch) {
+    genericMatch = newGenericMatch;
   }
   
   factory StoreProduct.fromJson(Map<String, dynamic> json) {
