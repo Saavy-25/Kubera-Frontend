@@ -42,7 +42,7 @@ class _ScanScreenState extends State<ScanScreen> {
   }
 
   // Process the image using Flask API
-  Future<Receipt> _processImage(File image) async {
+  Future<Receipt> _processReceipt(File image) async {
     setState(() {
       _isLoading = true;
     });
