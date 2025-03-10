@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_kubera/src/models/store_product.dart';
 
-class StoreProductCard extends StatelessWidget {
+class StoreProductCard extends StatefulWidget {
   final StoreProduct product;
   final ValueChanged<String> onLineItemChanged;
   final ValueChanged<String> onProductNameChanged;
   final ValueChanged<double> onPriceChanged;
-  
+
   final String? overhead;
   final String? subtitle;
 
@@ -36,7 +36,14 @@ class StoreProductCard extends StatelessWidget {
     this.onCheckboxChanged,
     this.onDelete,
     this.onAdd,
-  }): super(key: key);
+  }) : super(key: key);
+
+  @override
+  _StoreProductCardState createState() => _StoreProductCardState();
+}
+
+class _StoreProductCardState extends State<StoreProductCard> {
+  bool _isEditing = false;
 
   @override
   Widget build(BuildContext context) {
@@ -44,31 +51,61 @@ class StoreProductCard extends StatelessWidget {
       elevation: 3,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
-        onTap: onTap,
+        onTap: widget.onTap,
         borderRadius: BorderRadius.circular(12),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TextField(
-              controller: TextEditingController(text: product.lineItem),
-              decoration: const InputDecoration(labelText: 'Line Item'),
-              onChanged: onLineItemChanged,
-            ),
-            TextField(
-              controller: TextEditingController(text: product.productName),
-              decoration: const InputDecoration(labelText: 'Product Name'),
-              onChanged: onProductNameChanged,
-            ),
-            TextField(
-              controller: TextEditingController(text: product.price.toString()),
-              decoration: const InputDecoration(labelText: 'Price'),
-              keyboardType: TextInputType.number,
-              onChanged: (value) => onPriceChanged(double.tryParse(value) ?? 0.0),
-            ),
-          ],
-        ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (_isEditing) ...[
+                TextField(
+                  controller: TextEditingController(text: widget.product.lineItem),
+                  decoration: const InputDecoration(labelText: 'Line Item'),
+                  onChanged: widget.onLineItemChanged,
+                ),
+                TextField(
+                  controller: TextEditingController(text: widget.product.storeProductName),
+                  decoration: const InputDecoration(labelText: 'Product Name'),
+                  onChanged: widget.onProductNameChanged,
+                ),
+                TextField(
+                  controller: TextEditingController(text: widget.product.totalPrice.toString()),
+                  decoration: const InputDecoration(labelText: 'Price'),
+                  keyboardType: TextInputType.number,
+                  onChanged: (value) => widget.onPriceChanged(double.tryParse(value) ?? 0.0),
+                ),
+              ] else ...[
+                Text('Line Item: ${widget.product.lineItem}'),
+                Text('Product Name: ${widget.product.storeProductName}'),
+                Text('Price: \$${widget.product.totalPrice}'),
+              ],
+              const SizedBox(height: 8),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (_isEditing)
+                    TextButton(
+                      onPressed: () {
+                        setState(() {
+                          _isEditing = false;
+                        });
+                      },
+                      child: const Text('Save'),
+                    )
+                  else
+                    TextButton(
+                      onPressed: () {
+                        setState(() {
+                          _isEditing = true;
+                        });
+                      },
+                      child: const Text('Edit'),
+                    ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
