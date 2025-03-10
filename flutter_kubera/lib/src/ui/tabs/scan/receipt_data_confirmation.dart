@@ -3,6 +3,7 @@ import 'package:flutter_kubera/src/core/error_dialog.dart';
 import 'package:flutter_kubera/src/core/store_product_card.dart';
 import 'package:flutter_kubera/src/models/receipt.dart';
 import 'package:flutter_kubera/src/services/flask_service.dart';
+import 'package:flutter_kubera/src/ui/tabs/scan/product_generic_confirmation.dart';
 
 class ReceiptDataConfirmationScreen extends StatefulWidget {
   final Receipt receipt;
@@ -46,27 +47,18 @@ class _ReceiptDataConfirmationScreenState extends State<ReceiptDataConfirmationS
     super.dispose();
   }
 
-  Future<void> _confirmReceipt(BuildContext context, Receipt receipt) async {
+  Future<void> _mapReceipt(BuildContext context, Receipt receipt) async {
     try {
-      await FlaskService().postReceipt(receipt);
+      // Receipt mappedReceipt = await FlaskService().mapReceipt(receipt);
+      // TODO: Implement the mapping of the receipt 
+      Receipt mappedReceipt = receipt;
 
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Success'),
-            content: const Text('Receipt added to database'),
-            actions: <Widget>[
-              TextButton(
-                child: const Text('OK'),
-                onPressed: () {
-                  Navigator.of(context).pop(); // Close the dialog
-                  Navigator.of(context).pop(); // Go back to the previous screen
-                },
-              ),
-            ],
-          );
-        },
+      // Navigate to the next screen
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ProductGenericConfirmationScreen(receipt: mappedReceipt),
+        ),
       );
     } catch (e) {
       showDialog(
@@ -88,7 +80,7 @@ class _ReceiptDataConfirmationScreenState extends State<ReceiptDataConfirmationS
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Does this look correct?',
+              'Confirm The Product Names',
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -153,7 +145,7 @@ class _ReceiptDataConfirmationScreenState extends State<ReceiptDataConfirmationS
                   Expanded(
                     child: ElevatedButton.icon(
                       onPressed: () { //Go to scan screen
-                        _confirmReceipt(context, widget.receipt);
+                        _mapReceipt(context, widget.receipt);
                       },
                       label: const Text('Confirm'),
                       icon: const Icon(Icons.check),
