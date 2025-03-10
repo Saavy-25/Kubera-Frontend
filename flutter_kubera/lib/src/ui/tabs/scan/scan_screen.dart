@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_kubera/src/ui/tabs/scan/receipt_data_confirmation';
+import 'package:flutter_kubera/src/models/receipt.dart';
+import 'package:flutter_kubera/src/ui/tabs/scan/receipt_data_confirmation.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+
+import '../../../services/flask_service.dart';
 
 class ScanScreen extends StatefulWidget {
   const ScanScreen({super.key});
@@ -36,6 +39,12 @@ class _ScanScreenState extends State<ScanScreen> {
     }
   }
 
+  // Process the image using Flask API
+  Future<Receipt> _processImage(File image) async {
+    final processedReceipt = await FlaskService().processReceipt(image);
+    return processedReceipt;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,7 +60,6 @@ class _ScanScreenState extends State<ScanScreen> {
                     fontWeight: FontWeight.bold,
                   ),
             ),
-
             const SizedBox(height: 16),
 
             Expanded(
@@ -100,11 +108,19 @@ class _ScanScreenState extends State<ScanScreen> {
                 child: SizedBox(
                   width: double.infinity,
                   child: ElevatedButton.icon(
-                    onPressed: () { //Go to receipt confirmation page
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const ReceiptDataConfirmationScreen()),
-                      );
+                    onPressed: () async { //Go to receipt confirmation page
+                      if (_image != null) {
+                        final receipt = await _processImage(_image!);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ReceiptDataConfirmationScreen(receipt: receipt),
+                          ),
+                        );
+                      } else {
+                      // TODO: Show error message
+                        print('No image selected');
+                      }
                     },
                     label: const Text('Proceed'),
                     icon: const Icon(Icons.arrow_forward),
