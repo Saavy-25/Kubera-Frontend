@@ -25,10 +25,10 @@ class _ReceiptDataConfirmationScreenState extends State<ReceiptDataConfirmationS
         .map((product) => TextEditingController(text: product.lineItem))
         .toList();
     _productNameControllers = widget.receipt.products
-        .map((product) => TextEditingController(text: product.productName))
+        .map((product) => TextEditingController(text: product.storeProductName))
         .toList();
     _priceControllers = widget.receipt.products
-        .map((product) => TextEditingController(text: product.price.toString()))
+        .map((product) => TextEditingController(text: product.totalPrice.toString()))
         .toList();
   }
 
@@ -111,8 +111,6 @@ class _ReceiptDataConfirmationScreenState extends State<ReceiptDataConfirmationS
                 itemCount: widget.receipt.products.length,
                 itemBuilder: (context, index) {
                   final product = widget.receipt.products[index];
-                  // TODO: Display product data in an editable form
-
                   return StoreProductCard(
                     product: product,
                     onLineItemChanged: (value) {

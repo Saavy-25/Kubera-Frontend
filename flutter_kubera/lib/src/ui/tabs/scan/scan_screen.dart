@@ -131,23 +131,29 @@ class _ScanScreenState extends State<ScanScreen> {
                     onPressed: () async { //Go to receipt confirmation page
                       if (_image != null) {
                         // final receipt = await _processImage(_image!);
+                        // TODO: Remove this hardcoded receipt and uncomment the above line before PR!!
                         final receipt = Receipt.fromJson(
                           {
-                            "pk":"None",
-                            "sk":"None",
                             "store_name":"TRADER JOE'S",
+                            "store_address":"1234 ABCD ST",
                             "date":"2025-01-30",
+                            "total_receipt_price":"9.48",
                             "products":[
                               {
-                                "pk":"None",
-                                "unit":"None",
-                                "generic_pk":"None",
-                                "price":5.49,
-                                "date":"2025-01-30T00:00:00.000",
                                 "line_item":"YOGURT GREEK PLAIN 32 OZ",
-                                "generic_matches":["Plain Yogurt","Greek Yogurt", "Yogurt"],
-                                "product_name":"Plain Greek Yogurt",
-                                "generic_name":"None"
+                                "count":"1",
+                                "total_price":5.49,
+                                "price_per_count":5.49,
+                                "store_name":"TRADER JOE'S",
+                                "store_product_name":"Plain Greek Yogurt", // This hypothetically comes from gpt (this is what we want the user to confirm mainly)
+                              },
+                              {
+                                "line_item":"KIMBAP KOREAN SEAWEED RI",
+                                "count":"2",
+                                "total_price":3.99,
+                                "price_per_count":1.99,
+                                "store_name":"TRADER JOE'S",
+                                "store_product_name":"Korean Kimbap",
                               },
                             ]
                           }

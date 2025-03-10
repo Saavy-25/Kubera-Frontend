@@ -1,25 +1,27 @@
 
 class StoreProduct {
-  final String? pk;
-  final String? unit;
-  final String? genericPk;
-  double price;
-  final DateTime date;
   String lineItem;
+  String count;
+  double totalPrice;
+  double? pricePerCount;
+  final String? storeName;
+  final List<String>? recentPrices; // TODO: Change to List<RecentPrice> once Vy's changes are merged in
+  String storeProductName;
   final List<String>? genericMatches;
-  String? productName;
-  String? genericName;
+  final String? genericMatchId;
+  String? genericMatch;
 
   StoreProduct({
-    required this.pk,
-    required this.unit,
-    required this.genericPk,
-    required this.price,
-    required this.date,
     required this.lineItem,
-    required this.genericMatches,
-    required this.productName,
-    required this.genericName,
+    required this.count,
+    required this.totalPrice,
+    this.pricePerCount,
+    this.storeName,
+    this.recentPrices,
+    required this.storeProductName,
+    this.genericMatches,
+    this.genericMatchId,
+    this.genericMatch,
   });
 
   // Method to update the fields
@@ -27,12 +29,12 @@ class StoreProduct {
     lineItem = newLineItem;
   }
 
-  void updateProductName(String newProductName) {
-    productName = newProductName;
+  void updateProductName(String storeProductName) {
+    storeProductName = storeProductName;
   }
 
-  void updatePrice(double newPrice) {
-    price = newPrice;
+  void updatePrice(double totalPrice) {
+    totalPrice = totalPrice;
   }
   
   factory StoreProduct.fromJson(Map<String, dynamic> json) {
@@ -40,29 +42,31 @@ class StoreProduct {
     var genericMatches = genericMatchesFromJson.map((genericMatch) => genericMatch.toString()).toList();
 
     return StoreProduct(
-      pk: json['pk'],
-      unit: json['unit'],
-      genericPk: json['generic_pk'],
-      price: json['price']?.toDouble(),
-      date: DateTime.parse(json['date']),
-      lineItem: json['line_item'],
+      lineItem: json['line_item'] ?? '',
+      count: json['count'] ?? '',
+      totalPrice: json['total_price'] ?? 0.0,
+      pricePerCount: json['price_per_count'] ?? 0.0,
+      storeName: json['store_name'],
+      recentPrices: json['recent_prices']?.cast<String>(),
+      storeProductName: json['store_product_name'] ?? '',
       genericMatches: genericMatches,
-      productName: json['product_name'],
-      genericName: json['generic_name'],
+      genericMatchId: json['generic_match_id'],
+      genericMatch: json['generic_match']
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'pk': pk,
-      'unit': unit,
-      'generic_pk': genericPk,
-      'price': price,
-      'date': date.toIso8601String(),
       'line_item': lineItem,
+      'count': count,
+      'total_price': totalPrice,
+      'price_per_count': pricePerCount,
+      'store_name': storeName,
+      'recent_prices': recentPrices,
+      'store_product_name': storeProductName,
       'generic_matches': genericMatches,
-      'product_name': productName,
-      'generic_name': genericName,
+      'generic_match_id': genericMatchId,
+      'generic_match': genericMatch,
     };
   }
 }
