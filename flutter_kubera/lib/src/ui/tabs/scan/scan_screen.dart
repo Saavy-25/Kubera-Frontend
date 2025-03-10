@@ -146,6 +146,12 @@ class _ScanScreenState extends State<ScanScreen> {
                                 "price_per_count":5.49,
                                 "store_name":"TRADER JOE'S",
                                 "store_product_name":"Plain Greek Yogurt", // This hypothetically comes from gpt (this is what we want the user to confirm mainly)
+                                "generic_matches":[
+                                  "Greek Yogurt",
+                                  "Yogurt",
+                                  "Dairy"
+                                ],
+                                "generic_match":"Greek Yogurt"
                               },
                               {
                                 "line_item":"KIMBAP KOREAN SEAWEED RI",
@@ -154,6 +160,8 @@ class _ScanScreenState extends State<ScanScreen> {
                                 "price_per_count":1.99,
                                 "store_name":"TRADER JOE'S",
                                 "store_product_name":"Korean Kimbap",
+                                "generic_matches":[],
+                                "generic_match":"Kimbap",
                               },
                             ]
                           }
