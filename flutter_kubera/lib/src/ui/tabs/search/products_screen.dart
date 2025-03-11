@@ -55,8 +55,7 @@ class ProductsScreen extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: CustomCard(
                       overhead: product.storeName ?? '',
-                      title: product.productName,
-                      subtitle: product.storeAddress ?? '',
+                      title: product.storeProductName,
                       onAdd: () {
                         //TODO navigate to product page
                       },
