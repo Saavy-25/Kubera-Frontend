@@ -23,20 +23,20 @@ class Receipt {
 
     return Receipt(
       id: json['_id'] ?? '',
-      storeName: json['store_name'] ?? '',
-      storeAddress: json['store_address'] ?? '',
+      storeName: json['storeName'] ?? '',
+      storeAddress: json['storeAddress'] ?? '',
       date: json['date']  ?? '',
-      totalReceiptPrice: json['total_receipt_price']  ?? '',
+      totalReceiptPrice: json['totalReceiptPrice']  ?? '',
       products: productList
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'store_name': storeName,
-      'store_address': storeAddress,
+      'storeName': storeName,
+      'storeAddress': storeAddress,
       'date': date,
-      'total_receipt_price': totalReceiptPrice,
+      'totalReceiptPrice': totalReceiptPrice,
       'products': products.map((product) => product.toJson()).toList(),
     };
   }

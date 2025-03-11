@@ -58,11 +58,11 @@ class StoreProduct {
 
     return StoreProduct(
       id: json['_id'],
-      lineItem: json['line_item'] ?? '',
+      lineItem: json['lineItem'] ?? '',
       count: json['count'] ?? '',
-      totalPrice: json['total_price'] ?? 0.0,
-      pricePerCount: json['price_per_count'] ?? 0.0,
-      storeName: json['store_name'],
+      totalPrice: json['totalPrice'] ?? 0.0,
+      pricePerCount: json['pricePerCount'] ?? 0.0,
+      storeName: json['storeName'],
       date: json['date'],
       recentPrices: (json['recentPrices'] as List<dynamic>?)
           ?.map((price) => RecentPrice(
@@ -70,25 +70,25 @@ class StoreProduct {
         timestamp: (price[1] as String),
           ))
           .toList() ?? [],
-      storeProductName: json['store_product_name'] ?? '',
+      storeProductName: json['storeProductName'] ?? '',
       genericMatches: genericMatches,
-      genericMatchId: json['generic_match_id']
+      genericMatchId: json['genericMatchId']
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       '_id': id,
-      'line_item': lineItem,
+      'lineItem': lineItem,
       'count': count,
-      'total_price': totalPrice,
-      'price_per_count': pricePerCount,
-      'store_name': storeName,
+      'totalPrice': totalPrice,
+      'pricePerCount': pricePerCount,
+      'storeName': storeName,
       'date': date,
-      'recent_prices': recentPrices,
-      'store_product_name': storeProductName,
-      'generic_matches': genericMatches,
-      'generic_match_id': genericMatchId
+      'recentPrices': recentPrices?.map((price) => [price.price, price.timestamp]).toList(),
+      'storeProductName': storeProductName,
+      'genericMatches': genericMatches,
+      'genericMatchId': genericMatchId,
     };
   }
 }
