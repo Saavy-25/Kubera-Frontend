@@ -103,4 +103,15 @@ class FlaskService {
         }
     }
   }
+
+  Future<StoreProduct> fetchProduct(String productId) async {
+    final response = await http.get(Uri.parse('$baseUrl/get_productDetails/$productId'));
+
+    if (response.statusCode == 200) {
+      final productJson = jsonDecode(response.body);
+      return StoreProduct.fromJson(productJson);
+    } else {
+      throw Exception('Failed to fetch product');
+    }
+  }
 }
