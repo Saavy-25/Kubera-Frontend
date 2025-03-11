@@ -150,8 +150,7 @@ class _ScanScreenState extends State<ScanScreen> {
                                   "Greek Yogurt",
                                   "Yogurt",
                                   "Dairy"
-                                ],
-                                "generic_match":"Greek Yogurt"
+                                ]
                               },
                               {
                                 "line_item":"KIMBAP KOREAN SEAWEED RI",
@@ -161,7 +160,6 @@ class _ScanScreenState extends State<ScanScreen> {
                                 "store_name":"TRADER JOE'S",
                                 "store_product_name":"Korean Kimbap",
                                 "generic_matches":[],
-                                "generic_match":"Kimbap",
                               },
                             ]
                           }
