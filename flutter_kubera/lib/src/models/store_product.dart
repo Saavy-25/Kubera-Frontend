@@ -55,6 +55,11 @@ class StoreProduct {
   factory StoreProduct.fromJson(Map<String, dynamic> json) {
     var genericMatchesFromJson = json['generic_matches'] as List? ?? [];
     var genericMatches = genericMatchesFromJson.map((genericMatch) => genericMatch.toString()).toList();
+    var recentPricesFromJson = json['recentPrices'] as List? ?? [];
+    List<RecentPrice> recentPrices = recentPricesFromJson.map((price) => RecentPrice(
+      price: (price as List<dynamic>)[0] as double?,
+      timestamp: (price[1] as String),
+    )).toList();
 
     return StoreProduct(
       id: json['_id'],
@@ -62,14 +67,9 @@ class StoreProduct {
       count: json['count'] ?? '',
       totalPrice: json['totalPrice'] ?? 0.0,
       pricePerCount: json['pricePerCount'] ?? 0.0,
-      storeName: json['storeName'],
+      storeName: json['storeName'] ?? '',
       date: json['date'],
-      recentPrices: (json['recentPrices'] as List<dynamic>?)
-          ?.map((price) => RecentPrice(
-        price: (price as List<dynamic>)[0] as double?,
-        timestamp: (price[1] as String),
-          ))
-          .toList() ?? [],
+      recentPrices: recentPrices,
       storeProductName: json['storeProductName'] ?? '',
       genericMatches: genericMatches,
       genericMatchId: json['genericMatchId']

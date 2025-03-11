@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_kubera/src/core/error_dialog.dart';
 import 'package:flutter_kubera/src/models/receipt.dart';
-import 'package:flutter_kubera/src/ui/tabs/scan/receipt_data_confirmation.dart';
+import 'package:flutter_kubera/src/ui/tabs/scan/product_name_confirmation.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
@@ -134,32 +134,35 @@ class _ScanScreenState extends State<ScanScreen> {
                         // TODO: Remove this hardcoded receipt and uncomment the above line before PR!!
                         final receipt = Receipt.fromJson(
                           {
-                            "store_name":"TRADER JOE'S",
-                            "store_address":"1234 ABCD ST",
+                            "_id":"",
+                            "storeName":"TRADER JOE'S",
+                            "storeAddress":"1234 ABCD ST",
                             "date":"2025-01-30",
-                            "total_receipt_price":"9.48",
+                            "totalReceiptPrice":"9.48",
                             "products":[
                               {
-                                "line_item":"YOGURT GREEK PLAIN 32 OZ",
+                                "_id":"",
+                                "lineItem":"YOGURT GREEK PLAIN 32 OZ",
                                 "count":"1",
-                                "total_price":5.49,
-                                "price_per_count":5.49,
-                                "store_name":"TRADER JOE'S",
-                                "store_product_name":"Plain Greek Yogurt", // This hypothetically comes from gpt (this is what we want the user to confirm mainly)
-                                "generic_matches":[
+                                "totalPrice":5.49,
+                                "pricePerCount":5.49,
+                                "storeName":"TRADER JOE'S",
+                                "storeProductName":"Plain Greek Yogurt", // This hypothetically comes from gpt (this is what we want the user to confirm mainly)
+                                "genericMatches":[
                                   "Greek Yogurt",
                                   "Yogurt",
                                   "Dairy"
                                 ]
                               },
                               {
-                                "line_item":"KIMBAP KOREAN SEAWEED RI",
+                                "_id":"",
+                                "lineItem":"KIMBAP KOREAN SEAWEED RI",
                                 "count":"2",
-                                "total_price":3.99,
-                                "price_per_count":1.99,
-                                "store_name":"TRADER JOE'S",
-                                "store_product_name":"Korean Kimbap",
-                                "generic_matches":[],
+                                "totalPrice":3.99,
+                                "pricePerCount":1.99,
+                                "storeName":"TRADER JOE'S",
+                                "storeProductName":"Korean Kimbap",
+                                "genericMatches":[],
                               },
                             ]
                           }
@@ -167,7 +170,7 @@ class _ScanScreenState extends State<ScanScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => ReceiptDataConfirmationScreen(receipt: receipt),
+                            builder: (context) => ProductNameConfirmationScreen(receipt: receipt),
                           ),
                         );
                       } else {

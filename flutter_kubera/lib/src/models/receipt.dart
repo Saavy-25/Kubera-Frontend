@@ -33,6 +33,7 @@ class Receipt {
 
   Map<String, dynamic> toJson() {
     return {
+      '_id': id,
       'storeName': storeName,
       'storeAddress': storeAddress,
       'date': date,
