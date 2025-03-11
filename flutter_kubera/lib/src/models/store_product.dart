@@ -1,3 +1,12 @@
+class PricesTimes {
+  final double? price;
+  final String? timestamp; // Converting Mongo's Date to String for now
+
+  PricesTimes({
+    required this.price,
+    required this.timestamp,
+  });
+}
 
 class StoreProduct {
   String lineItem;
@@ -5,7 +14,7 @@ class StoreProduct {
   double totalPrice;
   double? pricePerCount;
   final String? storeName;
-  final List<String>? recentPrices; // TODO: Change to List<RecentPrice> once Vy's changes are merged in
+  final List<PricesTimes>? recentPrices; 
   String storeProductName;
   final List<String> genericMatches;
   final String? genericMatchId;
@@ -51,7 +60,12 @@ class StoreProduct {
       totalPrice: json['total_price'] ?? 0.0,
       pricePerCount: json['price_per_count'] ?? 0.0,
       storeName: json['store_name'],
-      recentPrices: json['recent_prices']?.cast<String>(),
+      recentPrices: (json['recentPrices'] as List<dynamic>?)
+          ?.map((price) => PricesTimes(
+        price: (price as List<dynamic>)[0] as double?,
+        timestamp: (price[1] as String),
+          ))
+          .toList() ?? [],
       storeProductName: json['store_product_name'] ?? '',
       genericMatches: genericMatches,
       genericMatchId: json['generic_match_id'],
