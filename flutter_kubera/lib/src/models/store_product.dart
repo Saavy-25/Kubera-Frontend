@@ -9,22 +9,26 @@ class RecentPrice {
 }
 
 class StoreProduct {
+  final String id;
   String lineItem;
   String count;
   double totalPrice;
   double? pricePerCount;
   final String? storeName;
+  final String? date;
   final List<RecentPrice>? recentPrices; 
   String storeProductName;
   final List<String> genericMatches;
   final String? genericMatchId;
 
   StoreProduct({
+    required this.id,
     required this.lineItem,
     required this.count,
     required this.totalPrice,
     this.pricePerCount,
     this.storeName,
+    this.date,
     this.recentPrices,
     required this.storeProductName,
     required this.genericMatches,
@@ -53,11 +57,13 @@ class StoreProduct {
     var genericMatches = genericMatchesFromJson.map((genericMatch) => genericMatch.toString()).toList();
 
     return StoreProduct(
+      id: json['_id'],
       lineItem: json['line_item'] ?? '',
       count: json['count'] ?? '',
       totalPrice: json['total_price'] ?? 0.0,
       pricePerCount: json['price_per_count'] ?? 0.0,
       storeName: json['store_name'],
+      date: json['date'],
       recentPrices: (json['recentPrices'] as List<dynamic>?)
           ?.map((price) => RecentPrice(
         price: (price as List<dynamic>)[0] as double?,
@@ -72,11 +78,13 @@ class StoreProduct {
 
   Map<String, dynamic> toJson() {
     return {
+      '_id': id,
       'line_item': lineItem,
       'count': count,
       'total_price': totalPrice,
       'price_per_count': pricePerCount,
       'store_name': storeName,
+      'date': date,
       'recent_prices': recentPrices,
       'store_product_name': storeProductName,
       'generic_matches': genericMatches,
