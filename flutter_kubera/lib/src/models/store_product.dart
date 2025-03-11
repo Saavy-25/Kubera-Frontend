@@ -1,8 +1,8 @@
-class PricesTimes {
+class RecentPrice {
   final double? price;
   final String? timestamp; // Converting Mongo's Date to String for now
 
-  PricesTimes({
+  RecentPrice({
     required this.price,
     required this.timestamp,
   });
@@ -14,7 +14,7 @@ class StoreProduct {
   double totalPrice;
   double? pricePerCount;
   final String? storeName;
-  final List<PricesTimes>? recentPrices; 
+  final List<RecentPrice>? recentPrices; 
   String storeProductName;
   final List<String> genericMatches;
   final String? genericMatchId;
@@ -59,7 +59,7 @@ class StoreProduct {
       pricePerCount: json['price_per_count'] ?? 0.0,
       storeName: json['store_name'],
       recentPrices: (json['recentPrices'] as List<dynamic>?)
-          ?.map((price) => PricesTimes(
+          ?.map((price) => RecentPrice(
         price: (price as List<dynamic>)[0] as double?,
         timestamp: (price[1] as String),
           ))
