@@ -69,7 +69,7 @@ class ReceiptDataConfirmationScreen extends StatelessWidget {
                   final product = receipt.products[index];
                   return ListTile(
                     title: Text(product.lineItem),
-                    subtitle: Text('Price: \$${product.price}'),
+                    subtitle: Text('Price: \$${product.pricesTimes?[0]}'),
                   );
                 },
               ),
