@@ -55,34 +55,39 @@ class _StoreProductCardState extends State<StoreProductCard> {
         borderRadius: BorderRadius.circular(12),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Column(
+          child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (_isEditing) ...[
-                TextField(
-                  controller: TextEditingController(text: widget.product.lineItem),
-                  decoration: const InputDecoration(labelText: 'Line Item'),
-                  onChanged: widget.onLineItemChanged,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (_isEditing) ...[
+                      TextField(
+                        controller: TextEditingController(text: widget.product.lineItem),
+                        decoration: const InputDecoration(labelText: 'Line Item'),
+                        onChanged: widget.onLineItemChanged,
+                      ),
+                      TextField(
+                        controller: TextEditingController(text: widget.product.storeProductName),
+                        decoration: const InputDecoration(labelText: 'Product Name'),
+                        onChanged: widget.onProductNameChanged,
+                      ),
+                      TextField(
+                        controller: TextEditingController(text: widget.product.totalPrice.toString()),
+                        decoration: const InputDecoration(labelText: 'Price'),
+                        keyboardType: TextInputType.number,
+                        onChanged: (value) => widget.onPriceChanged(double.tryParse(value) ?? 0.0),
+                      ),
+                    ] else ...[
+                      Text('Line Item: ${widget.product.lineItem}'),
+                      Text('Product Name: ${widget.product.storeProductName}'),
+                      Text('Price: \$${widget.product.totalPrice}'),
+                    ],
+                  ],
                 ),
-                TextField(
-                  controller: TextEditingController(text: widget.product.storeProductName),
-                  decoration: const InputDecoration(labelText: 'Product Name'),
-                  onChanged: widget.onProductNameChanged,
-                ),
-                TextField(
-                  controller: TextEditingController(text: widget.product.totalPrice.toString()),
-                  decoration: const InputDecoration(labelText: 'Price'),
-                  keyboardType: TextInputType.number,
-                  onChanged: (value) => widget.onPriceChanged(double.tryParse(value) ?? 0.0),
-                ),
-              ] else ...[
-                Text('Line Item: ${widget.product.lineItem}'),
-                Text('Product Name: ${widget.product.storeProductName}'),
-                Text('Price: \$${widget.product.totalPrice}'),
-              ],
-              const SizedBox(height: 8),
+              ),
               Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   if (_isEditing)
                     TextButton(
