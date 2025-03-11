@@ -18,7 +18,6 @@ class StoreProduct {
   String storeProductName;
   final List<String> genericMatches;
   final String? genericMatchId;
-  String? genericMatch;
 
   StoreProduct({
     required this.lineItem,
@@ -30,7 +29,6 @@ class StoreProduct {
     required this.storeProductName,
     required this.genericMatches,
     this.genericMatchId,
-    this.genericMatch,
   });
 
   // Method to update the fields
@@ -47,7 +45,7 @@ class StoreProduct {
   }
 
   void updateGenericMatch(String newGenericMatch) {
-    genericMatch = newGenericMatch;
+    genericMatches[0] = newGenericMatch;
   }
   
   factory StoreProduct.fromJson(Map<String, dynamic> json) {
@@ -68,8 +66,7 @@ class StoreProduct {
           .toList() ?? [],
       storeProductName: json['store_product_name'] ?? '',
       genericMatches: genericMatches,
-      genericMatchId: json['generic_match_id'],
-      genericMatch: json['generic_match']
+      genericMatchId: json['generic_match_id']
     );
   }
 
@@ -83,8 +80,7 @@ class StoreProduct {
       'recent_prices': recentPrices,
       'store_product_name': storeProductName,
       'generic_matches': genericMatches,
-      'generic_match_id': genericMatchId,
-      'generic_match': genericMatch,
+      'generic_match_id': genericMatchId
     };
   }
 }

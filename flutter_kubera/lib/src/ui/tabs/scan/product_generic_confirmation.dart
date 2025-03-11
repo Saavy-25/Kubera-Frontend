@@ -62,10 +62,10 @@ class _ProductGenericConfirmationScreenState extends State<ProductGenericConfirm
                           const SizedBox(height: 8),
                           if (product.genericMatches.length > 1)
                             DropdownButton<String>(
-                              value: product.genericMatch,
+                              value: product.genericMatches[0],
                               onChanged: (String? newValue) {
                                 setState(() {
-                                  product.genericMatch = newValue!;
+                                  product.genericMatches[0] = newValue!;
                                 });
                               },
                               items: product.genericMatches
@@ -78,18 +78,9 @@ class _ProductGenericConfirmationScreenState extends State<ProductGenericConfirm
                             )
                           else
                             Text(
-                              'Generic Match: ${product.genericMatch}',
+                              'Generic Match: ${product.genericMatches[0]}',
                               style: const TextStyle(fontSize: 16),
                             ),
-                            // TextField(
-                            //   controller: TextEditingController(text: product.genericMatch),
-                            //   decoration: const InputDecoration(labelText: 'Generic Match'),
-                            //   onChanged: (value) {
-                            //     setState(() {
-                            //       product.genericMatch = value;
-                            //     });
-                            //   },
-                            // ),
                           const SizedBox(height: 8),
                         ],
                       ),
