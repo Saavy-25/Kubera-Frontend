@@ -10,10 +10,10 @@ import 'package:http_parser/http_parser.dart';
 
 class FlaskService {
   // when running on physical device use the ip address of the machine running the server (i.e your laptop )
-  static const String baseUrl = 'http://192.168.0.66:5000/flutter';
+  // static const String baseUrl = 'http://10.188.80.50:5000/flutter';
 
   // when running on emulator use the following
-  // static const String baseUrl = 'http://localhost:5000/flutter';
+  static const String baseUrl = 'http://localhost:5000/flutter';
 
   Future<Test> fetchTest() async {
     final response = await http.get(Uri.parse('$baseUrl/get_data'));
@@ -51,6 +51,30 @@ class FlaskService {
 
   }
 
+  // This api will call gpt to get generic matches to be verified by the user
+  Future<Receipt> mapReceipt(Receipt receipt) async {
+    try {
+        final response = await http.post(
+        Uri.parse('$baseUrl/map_receipt'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(receipt.toJson()),
+      );
+
+      if (response.statusCode == 200) {
+        final jsonResponse = jsonDecode(response.body);
+        return Receipt.fromJson(jsonDecode(jsonResponse['receipt']));
+      }
+      else {
+        throw Exception('Failed to map receipt: ${response.statusCode}');
+      }
+
+    }
+    catch (e) {
+      throw Exception('Failed to map receipt: $e');
+    }
+  }
+
+  // This api will post the receipt to mongo after full confirmation (product name and generic name)
   Future<void> postReceipt(Receipt receipt) async {
     final response = await http.post(
       Uri.parse('$baseUrl/post_receipt'),

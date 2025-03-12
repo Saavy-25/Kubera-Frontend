@@ -13,14 +13,14 @@ class ItemScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(storeProduct.productName)),
+      appBar: AppBar(title: Text(storeProduct.storeProductName)),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         // Add a table to display prices and timestamps from storeProduct.recentPrices
         child: Column(
           children: [
             CustomCard(
-              title: storeProduct.productName,
+              title: storeProduct.storeProductName,
               overhead: storeProduct.storeName
             ),
             SizedBox(height: 16.0),

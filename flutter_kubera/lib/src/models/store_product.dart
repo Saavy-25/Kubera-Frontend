@@ -1,8 +1,8 @@
-class RecentPrices {
+class RecentPrice {
   final double? price;
   final String? timestamp; // Converting Mongo's Date to String for now
 
-  RecentPrices({
+  RecentPrice({
     required this.price,
     required this.timestamp,
   });
@@ -10,61 +10,95 @@ class RecentPrices {
 
 class StoreProduct {
   final String id;
-  final String genericId;
-  final List<RecentPrices>? recentPrices;
-  final String lineItem;
-  final List<String>? genericMatches;
-  final String productName;
-  final String? genericName;
+  String lineItem;
+  String count;
+  double totalPrice;
+  double? pricePerCount;
   final String? storeName;
-  final String? storeAddress;
+  final String? date;
+  final List<RecentPrice>? recentPrices; 
+  String storeProductName;
+  final List<String> genericMatches;
+  String genericMatch;
+  final String? genericMatchId;
 
   StoreProduct({
     required this.id,
-    required this.genericId,
-    this.recentPrices,
     required this.lineItem,
-    this.genericMatches,
-    required this.productName,
-    this.genericName,
+    required this.count,
+    required this.totalPrice,
+    this.pricePerCount,
     this.storeName,
-    this.storeAddress,
+    this.date,
+    this.recentPrices,
+    required this.storeProductName,
+    required this.genericMatches,
+    this.genericMatch = '',
+    this.genericMatchId,
   });
 
+  // Method to update the fields
+  void updateLineItem(String newLineItem) {
+    lineItem = newLineItem;
+  }
 
+  void updateProductName(String storeProductName) {
+    storeProductName = storeProductName;
+  }
+
+  void updatePrice(double totalPrice) {
+    totalPrice = totalPrice;
+  }
+
+  void updateGenericMatch(String newGenericMatch) {
+    genericMatch = newGenericMatch;
+  }
+  
   factory StoreProduct.fromJson(Map<String, dynamic> json) {
-    var genericMatchesFromJson = json['generic_matches'] as List? ?? [];
+    var genericMatchesFromJson = json['genericMatches'] as List? ?? [];
     var genericMatches = genericMatchesFromJson.map((genericMatch) => genericMatch.toString()).toList();
+    var recentPricesFromJson = json['recentPrices'] as List? ?? [];
+    List<RecentPrice> recentPrices = recentPricesFromJson.map((price) => RecentPrice(
+      price: (price as List<dynamic>)[0] as double?,
+      timestamp: (price[1] as String),
+    )).toList();
 
     return StoreProduct(
       id: json['_id'] ?? '',
-      genericId: json['genericId'] ?? '',
       recentPrices: (json['recentPrices'] as List<dynamic>?)
-          ?.map((price) => RecentPrices(
+          ?.map((price) => RecentPrice(
         price: (price as List<dynamic>)[0] as double?,
         timestamp: (price[1] as String),
           ))
           .toList() ?? [],
       lineItem: json['lineItem'] ?? '',
-      genericMatches: genericMatches.isNotEmpty ? genericMatches : [],
-      productName: json['storeProductName'] ?? '',
-      genericName: json['genericName'] ?? '',
+      count: json['count'] ?? '',
+      totalPrice: json['totalPrice'] ?? 0.0,
+      pricePerCount: json['pricePerCount'] ?? 0.0,
       storeName: json['storeName'] ?? '',
-      storeAddress: json['storeAddress'] ?? '',
-        );
+      date: json['date'],
+      storeProductName: json['storeProductName'] ?? '',
+      genericMatches: genericMatches,
+      genericMatch: genericMatches[0],
+      genericMatchId: json['genericMatchId']
+    );
   }
 
   Map<String, dynamic> toJson() {
+    genericMatches[0] = genericMatch;
+    
     return {
       '_id': id,
-      'genericPk': genericId,
-      'pricesTimes': recentPrices?.map((price) => [price.price, price.timestamp?.toString()]).toList(),
       'lineItem': lineItem,
-      'generic_matches': genericMatches,
-      'productName': productName,
-      'genericName': genericName,
+      'count': count,
+      'totalPrice': totalPrice,
+      'pricePerCount': pricePerCount,
       'storeName': storeName,
-      'storeAddress': storeAddress,
+      'date': date,
+      'recentPrices': recentPrices?.map((price) => [price.price, price.timestamp]).toList(),
+      'storeProductName': storeProductName,
+      'genericMatches': genericMatches,
+      'genericMatchId': genericMatchId,
     };
   }
 }
