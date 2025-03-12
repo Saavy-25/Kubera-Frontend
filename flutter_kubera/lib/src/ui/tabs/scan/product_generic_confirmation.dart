@@ -44,10 +44,10 @@ class _ProductGenericConfirmationScreenState extends State<ProductGenericConfirm
               },
             ),
             TextButton(
-              child: const Text('OK'),
+              child: const Text('Save'),
               onPressed: () {
                 setState(() {
-                  product.genericMatches[0] = selectedMatch!;
+                  product.genericMatch = selectedMatch!;
                 });
                 Navigator.of(context).pop();
               },
@@ -93,13 +93,19 @@ class _ProductGenericConfirmationScreenState extends State<ProductGenericConfirm
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Product Name: ${product.storeProductName}',
+                                  product.storeProductName,
                                   style: const TextStyle(fontSize: 16),
                                 ),
                                 const SizedBox(height: 8),
-                                Text(
-                                  'Generic Match: ${product.genericMatches[0]}',
-                                  style: const TextStyle(fontSize: 16),
+                                Row(
+                                  children: [
+                                    const Icon(Icons.arrow_forward, size: 16),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      product.genericMatch,
+                                      style: const TextStyle(fontSize: 16),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
