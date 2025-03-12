@@ -199,6 +199,7 @@ class _ProductGenericConfirmationScreenState extends State<ProductGenericConfirm
                 onPressed: () {
                   Navigator.of(context).pop(); // Close the dialog
                   Navigator.of(context).pop(); // Go back to the previous screen
+                  Navigator.of(context).pop(); // Go back to the scan screen
                 },
               ),
             ],
