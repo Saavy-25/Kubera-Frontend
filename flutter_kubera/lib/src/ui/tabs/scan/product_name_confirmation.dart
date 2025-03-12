@@ -15,13 +15,20 @@ class ProductNameConfirmationScreen extends StatefulWidget {
 }
 
 class _ProductNameConfirmationScreenState extends State<ProductNameConfirmationScreen> {
+  late TextEditingController _storeNameController;
+  late TextEditingController _dateController;
   late List<TextEditingController> _lineItemControllers;
   late List<TextEditingController> _productNameControllers;
   late List<TextEditingController> _priceControllers;
 
+  bool _isEditingStoreName = false;
+  bool _isEditingDate = false;
+
   @override
   void initState() {
     super.initState();
+    _storeNameController = TextEditingController(text: widget.receipt.storeName);
+    _dateController = TextEditingController(text: widget.receipt.date);
     _lineItemControllers = widget.receipt.products
         .map((product) => TextEditingController(text: product.lineItem))
         .toList();
@@ -35,6 +42,8 @@ class _ProductNameConfirmationScreenState extends State<ProductNameConfirmationS
 
   @override
   void dispose() {
+    _storeNameController.dispose();
+    _dateController.dispose();
     for (var controller in _lineItemControllers) {
       controller.dispose();
     }
@@ -88,8 +97,74 @@ class _ProductNameConfirmationScreenState extends State<ProductNameConfirmationS
 
             // Display receipt data
             const SizedBox(height: 16),
-            Text('Store Name: ${widget.receipt.storeName}'),
-            Text('Date: ${widget.receipt.date}'),
+            Card(
+              elevation: 3,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (_isEditingStoreName)
+                            TextField(
+                              controller: _storeNameController,
+                              decoration: const InputDecoration(labelText: 'Store Name'),
+                              onChanged: (value) {
+                                setState(() {
+                                  widget.receipt.storeName = value;
+                                });
+                              },
+                            )
+                          else
+                            Text('Store Name: ${widget.receipt.storeName}'),
+                          const SizedBox(height: 8),
+                          if (_isEditingDate)
+                            TextField(
+                              controller: _dateController,
+                              decoration: const InputDecoration(labelText: 'Date'),
+                              onChanged: (value) {
+                                setState(() {
+                                  widget.receipt.date = value;
+                                });
+                              },
+                            )
+                          else
+                            Text('Date: ${widget.receipt.date}'),
+                        ],
+                      ),
+                    ),
+                    Column(
+                      children: [
+                        if (_isEditingStoreName || _isEditingDate)
+                          TextButton(
+                            onPressed: () {
+                              setState(() {
+                                _isEditingStoreName = false;
+                                _isEditingDate = false;
+                              });
+                            },
+                            child: const Text('Save'),
+                          )
+                        else
+                          TextButton(
+                            onPressed: () {
+                              setState(() {
+                                _isEditingStoreName = true;
+                                _isEditingDate = true;
+                              });
+                            },
+                            child: const Text('Edit'),
+                          ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
             const SizedBox(height: 16),
             Text(
               'Products:',

@@ -53,7 +53,7 @@ class StoreProduct {
   }
   
   factory StoreProduct.fromJson(Map<String, dynamic> json) {
-    var genericMatchesFromJson = json['generic_matches'] as List? ?? [];
+    var genericMatchesFromJson = json['genericMatches'] as List? ?? [];
     var genericMatches = genericMatchesFromJson.map((genericMatch) => genericMatch.toString()).toList();
     var recentPricesFromJson = json['recentPrices'] as List? ?? [];
     List<RecentPrice> recentPrices = recentPricesFromJson.map((price) => RecentPrice(

@@ -2,9 +2,9 @@ import 'package:flutter_kubera/src/models/store_product.dart';
 
 class Receipt {
   final String id;
-  final String storeName;
+  String storeName;
   final String storeAddress;
-  final String date;
+  String date;
   final String totalReceiptPrice;
   List<StoreProduct> products;
 
@@ -16,6 +16,15 @@ class Receipt {
     required this.totalReceiptPrice,
     required this.products
   });
+
+  void updateStoreName(String newStoreName) {
+    storeName = newStoreName;
+    
+  }
+
+  void updateDate(String newDate) {
+    date = newDate;
+  }
 
   factory Receipt.fromJson(Map<String, dynamic> json) {
     var productsFromJson = json['products'] as List? ?? [];

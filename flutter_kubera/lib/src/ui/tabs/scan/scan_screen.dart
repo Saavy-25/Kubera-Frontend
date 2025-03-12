@@ -162,7 +162,7 @@ class _ScanScreenState extends State<ScanScreen> {
                                 "pricePerCount":1.99,
                                 "storeName":"TRADER JOE'S",
                                 "storeProductName":"Korean Kimbap",
-                                "genericMatches":[],
+                                "genericMatches":["Kimbap"],
                               },
                             ]
                           }

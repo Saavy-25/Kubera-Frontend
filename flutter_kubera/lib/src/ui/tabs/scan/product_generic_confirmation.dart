@@ -14,6 +14,50 @@ class ProductGenericConfirmationScreen extends StatefulWidget {
 }
 
 class _ProductGenericConfirmationScreenState extends State<ProductGenericConfirmationScreen> {
+  void _showGenericMatchDialog(StoreProduct product) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        String? selectedMatch = product.genericMatches[0];
+        return AlertDialog(
+          title: const Text('Select Generic Match'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: product.genericMatches.map((String match) {
+              return RadioListTile<String>(
+                title: Text(match),
+                value: match,
+                groupValue: selectedMatch,
+                onChanged: (String? value) {
+                  setState(() {
+                    selectedMatch = value;
+                  });
+                },
+              );
+            }).toList(),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                setState(() {
+                  product.genericMatches[0] = selectedMatch!;
+                });
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,17 +74,6 @@ class _ProductGenericConfirmationScreenState extends State<ProductGenericConfirm
                   ),
             ),
 
-            // Display receipt data
-            const SizedBox(height: 16),
-            Text('Store Name: ${widget.receipt.storeName}'),
-            Text('Date: ${widget.receipt.date}'),
-            const SizedBox(height: 16),
-            Text(
-              'Products:',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-            ),
             const SizedBox(height: 8),
             Expanded(
               child: ListView.builder(
@@ -52,36 +85,35 @@ class _ProductGenericConfirmationScreenState extends State<ProductGenericConfirm
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
-                      child: Column(
+                      child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            'Product Name: ${product.storeProductName}',
-                            style: const TextStyle(fontSize: 16),
-                          ),
-                          const SizedBox(height: 8),
-                          if (product.genericMatches.length > 1)
-                            DropdownButton<String>(
-                              value: product.genericMatches[0],
-                              onChanged: (String? newValue) {
-                                setState(() {
-                                  product.genericMatches[0] = newValue!;
-                                });
-                              },
-                              items: product.genericMatches
-                                  .map<DropdownMenuItem<String>>((String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(value),
-                                );
-                              }).toList(),
-                            )
-                          else
-                            Text(
-                              'Generic Match: ${product.genericMatches[0]}',
-                              style: const TextStyle(fontSize: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Product Name: ${product.storeProductName}',
+                                  style: const TextStyle(fontSize: 16),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  'Generic Match: ${product.genericMatches[0]}',
+                                  style: const TextStyle(fontSize: 16),
+                                ),
+                              ],
                             ),
-                          const SizedBox(height: 8),
+                          ),
+                          Column(
+                            children: [
+                              TextButton(
+                                onPressed: () {
+                                  _showGenericMatchDialog(product);
+                                },
+                                child: const Text('Edit'),
+                              ),
+                            ],
+                          ),
                         ],
                       ),
                     ),
