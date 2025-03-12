@@ -10,7 +10,7 @@ import 'package:http_parser/http_parser.dart';
 
 class FlaskService {
   // when running on physical device use the ip address of the machine running the server (i.e your laptop )
-  static const String baseUrl = 'http://192.168.0.66:5000/flutter';
+  static const String baseUrl = 'http://10.136.17.109:5000/flutter';
 
   // when running on emulator use the following
   // static const String baseUrl = 'http://localhost:5000/flutter';
@@ -62,7 +62,8 @@ class FlaskService {
 
       if (response.statusCode == 200) {
         final jsonResponse = jsonDecode(response.body);
-        return Receipt.fromJson(jsonDecode(jsonResponse['receipt']));
+        final receiptJson = jsonResponse['receipt'];
+        return Receipt.fromJson(receiptJson);
       }
       else {
         throw Exception('Failed to map receipt: ${response.statusCode}');
