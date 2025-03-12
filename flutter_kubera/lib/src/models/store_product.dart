@@ -19,6 +19,7 @@ class StoreProduct {
   final List<RecentPrice>? recentPrices; 
   String storeProductName;
   final List<String> genericMatches;
+  String genericMatch;
   final String? genericMatchId;
 
   StoreProduct({
@@ -32,6 +33,7 @@ class StoreProduct {
     this.recentPrices,
     required this.storeProductName,
     required this.genericMatches,
+    this.genericMatch = '',
     this.genericMatchId,
   });
 
@@ -49,7 +51,7 @@ class StoreProduct {
   }
 
   void updateGenericMatch(String newGenericMatch) {
-    genericMatches[0] = newGenericMatch;
+    genericMatch = newGenericMatch;
   }
   
   factory StoreProduct.fromJson(Map<String, dynamic> json) {
@@ -72,11 +74,14 @@ class StoreProduct {
       recentPrices: recentPrices,
       storeProductName: json['storeProductName'] ?? '',
       genericMatches: genericMatches,
+      genericMatch: genericMatches[0],
       genericMatchId: json['genericMatchId']
     );
   }
 
   Map<String, dynamic> toJson() {
+    genericMatches[0] = genericMatch;
+    
     return {
       '_id': id,
       'lineItem': lineItem,
