@@ -5,7 +5,7 @@ class Receipt {
   String storeName;
   final String storeAddress;
   String date;
-  final String totalReceiptPrice;
+  final double totalReceiptPrice;
   List<StoreProduct> products;
 
   Receipt({
@@ -39,7 +39,7 @@ class Receipt {
       storeName: json['storeName'] ?? '',
       storeAddress: json['storeAddress'] ?? '',
       date: json['date']  ?? '',
-      totalReceiptPrice: json['totalReceiptPrice']  ?? '',
+      totalReceiptPrice: json['totalReceiptPrice']  ?? 0.0,
       products: productList
     );
   }

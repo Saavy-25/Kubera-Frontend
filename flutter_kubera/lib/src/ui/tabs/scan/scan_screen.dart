@@ -140,46 +140,6 @@ class _ScanScreenState extends State<ScanScreen> {
                     onPressed: () async { //Go to receipt confirmation page
                       if (_image != null) {
                         final receipt = await _processReceipt(_image!);
-                        // TODO: Remove this hardcoded receipt and uncomment the above line before PR!!
-                        // final receipt = Receipt.fromJson(
-                        //   {
-                        //     "_id":"",
-                        //     "storeName":"TRADER JOE'S",
-                        //     "storeAddress":"1234 ABCD ST",
-                        //     "date":"2025-01-30",
-                        //     "totalReceiptPrice":"9.48",
-                        //     "products":[
-                        //       {
-                        //         "_id":"",
-                        //         "lineItem":"YOGURT GREEK PLAIN 32 OZ",
-                        //         "count":"1",
-                        //         "totalPrice":5.49,
-                        //         "pricePerCount":5.49,
-                        //         "storeName":"TRADER JOE'S",
-                        //         "storeProductName":"Plain Greek Yogurt", // This hypothetically comes from gpt (this is what we want the user to confirm mainly)
-                        //         "genericMatches":[
-                        //           "Greek Yogurt",
-                        //           "Yogurt",
-                        //           "Dairy"
-                        //         ]
-                        //       },
-                        //       {
-                        //         "_id":"",
-                        //         "lineItem":"KIMBAP KOREAN SEAWEED RI",
-                        //         "count":"2",
-                        //         "totalPrice":3.99,
-                        //         "pricePerCount":1.99,
-                        //         "storeName":"TRADER JOE'S",
-                        //         "storeProductName":"Korean Kimbap",
-                        //         "genericMatches":["Kimbap"],
-                        //       },
-                        //     ]
-                        //   }
-                        // );
-                        if (receipt.products.isEmpty) {
-                          return;
-                        }
-
                         Navigator.push(
                           context,
                           MaterialPageRoute(

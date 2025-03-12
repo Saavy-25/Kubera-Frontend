@@ -58,9 +58,7 @@ class _ProductNameConfirmationScreenState extends State<ProductNameConfirmationS
 
   Future<void> _mapReceipt(BuildContext context, Receipt receipt) async {
     try {
-      // Receipt mappedReceipt = await FlaskService().mapReceipt(receipt);
-      // TODO: Implement the mapping of the receipt 
-      Receipt mappedReceipt = receipt;
+      Receipt mappedReceipt = await FlaskService().mapReceipt(receipt);
 
       // Navigate to the next screen
       Navigator.push(

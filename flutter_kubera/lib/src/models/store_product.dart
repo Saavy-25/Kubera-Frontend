@@ -11,7 +11,7 @@ class RecentPrice {
 class StoreProduct {
   final String id;
   String lineItem;
-  String count;
+  int count;
   double totalPrice;
   double? pricePerCount;
   final String? storeName;
@@ -20,7 +20,7 @@ class StoreProduct {
   String storeProductName;
   final List<String> genericMatches;
   String genericMatch;
-  final String? genericMatchId;
+  final String? genericId;
 
   StoreProduct({
     required this.id,
@@ -34,7 +34,7 @@ class StoreProduct {
     required this.storeProductName,
     required this.genericMatches,
     this.genericMatch = '',
-    this.genericMatchId,
+    this.genericId,
   });
 
   // Method to update the fields
@@ -67,7 +67,7 @@ class StoreProduct {
       id: json['_id'] ?? '',
       recentPrices: recentPrices,
       lineItem: json['lineItem'] ?? '',
-      count: json['count'] ?? '',
+      count: json['count'] ?? 1,
       totalPrice: json['totalPrice'] ?? 0.0,
       pricePerCount: json['pricePerCount'] ?? 0.0,
       storeName: json['storeName'] ?? '',
@@ -75,12 +75,14 @@ class StoreProduct {
       storeProductName: json['storeProductName'] ?? '',
       genericMatches: genericMatches,
       genericMatch: genericMatches.isNotEmpty ? genericMatches[0] : '',
-      genericMatchId: json['genericMatchId']
+      genericId: json['genericId']
     );
   }
 
   Map<String, dynamic> toJson() {
-    genericMatches[0] = genericMatch;
+    if (genericMatches.isNotEmpty) {
+      genericMatches[0] = genericMatch;
+    }
     
     return {
       '_id': id,
@@ -93,7 +95,7 @@ class StoreProduct {
       'recentPrices': recentPrices?.map((price) => [price.price, price.timestamp]).toList(),
       'storeProductName': storeProductName,
       'genericMatches': genericMatches,
-      'genericMatchId': genericMatchId,
+      'genericId': genericId,
     };
   }
 }
