@@ -15,26 +15,43 @@ class ProductGenericConfirmationScreen extends StatefulWidget {
 
 class _ProductGenericConfirmationScreenState extends State<ProductGenericConfirmationScreen> {
   void _showGenericMatchDialog(StoreProduct product) {
+    TextEditingController customOptionController = TextEditingController();
+    String? selectedMatch = product.genericMatch;
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        String? selectedMatch = product.genericMatches[0];
         return AlertDialog(
           title: const Text('Select Generic Match'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
-            children: product.genericMatches.map((String match) {
-              return RadioListTile<String>(
-                title: Text(match),
-                value: match,
+            children: [
+              ...product.genericMatches.map((String match) {
+                return RadioListTile<String>(
+                  title: Text(match),
+                  value: match,
+                  groupValue: selectedMatch,
+                  onChanged: (String? value) {
+                    setState(() {
+                      selectedMatch = value;
+                    });
+                  },
+                );
+              }).toList(),
+              RadioListTile<String>(
+                title: TextField(
+                  controller: customOptionController,
+                  decoration: const InputDecoration(labelText: 'Enter new'),
+                ),
+                value: customOptionController.text,
                 groupValue: selectedMatch,
                 onChanged: (String? value) {
                   setState(() {
                     selectedMatch = value;
                   });
                 },
-              );
-            }).toList(),
+              ),
+            ],
           ),
           actions: <Widget>[
             TextButton(
