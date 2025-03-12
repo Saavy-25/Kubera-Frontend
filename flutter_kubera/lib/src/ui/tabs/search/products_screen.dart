@@ -4,7 +4,7 @@ import '../../../core/card.dart';
 import 'package:flutter_kubera/src/services/flask_service.dart';
 import 'package:flutter_kubera/src/models/store_product.dart';
 
-class ProductsScreen extends StatelessWidget {
+class ProductsScreen extends StatefulWidget {
   final String itemId;
   final String itemName;
   final String genericId;
@@ -15,6 +15,19 @@ class ProductsScreen extends StatelessWidget {
     required this.itemName,
     required this.genericId,
   });
+
+  @override
+  _ProductsScreenState createState() => _ProductsScreenState();
+}
+
+class _ProductsScreenState extends State<ProductsScreen> {
+  late Future<List<StoreProduct>> _productsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _productsFuture = fetchProducts(widget.genericId);
+  }
 
   Future<List<StoreProduct>> fetchProducts(String genericId) async {
     final flaskService = FlaskService();
@@ -33,15 +46,20 @@ class ProductsScreen extends StatelessWidget {
       MaterialPageRoute(
         builder: (context) => ItemScreen(storeProduct: storeProduct),
       ),
-    );
+    ).then((_) {
+      // Refresh the page when coming back from the next page
+      setState(() {
+        _productsFuture = fetchProducts(widget.genericId);
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(itemName)),
+      appBar: AppBar(title: Text(widget.itemName)),
       body: FutureBuilder<List<StoreProduct>>(
-        future: fetchProducts(genericId),
+        future: _productsFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -75,9 +93,7 @@ class ProductsScreen extends StatelessWidget {
                 }).toList(),
               ),
             );
-          } 
-          
-          else {
+          } else {
             return const Center(child: Text('No product of this type has been submitted.'));
           }
         },
