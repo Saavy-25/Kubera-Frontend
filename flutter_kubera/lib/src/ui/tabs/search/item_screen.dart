@@ -16,47 +16,19 @@ class ItemScreen extends StatelessWidget {
       appBar: AppBar(title: Text(storeProduct.storeProductName)),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        // Add a table to display prices and timestamps from storeProduct.recentPrices
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            CustomCard(
-              title: storeProduct.storeProductName,
-              overhead: storeProduct.storeName
+            Padding(
+              padding: const EdgeInsets.all(5.0), 
+              child: Text("Last Reported Prices", style: Theme.of(context).textTheme.titleMedium, textAlign: TextAlign.start)
             ),
             SizedBox(height: 16.0),
-            Table(
-              border: TableBorder.all(),
-              columnWidths: const {
-          0: FlexColumnWidth(1),
-          1: FlexColumnWidth(2),
-              },
+            Column(
               children: [
-          TableRow(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text('Price', style: TextStyle(fontWeight: FontWeight.bold)),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text('Timestamp', style: TextStyle(fontWeight: FontWeight.bold)),
-              ),
-            ],
-          ),
-          if (storeProduct.recentPrices != null)
-            for (var priceTime in storeProduct.recentPrices!)
-            TableRow(
-              children: [
-                Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(priceTime.price.toString()),
-                ),
-                Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(priceTime.timestamp.toString()),
-                ),
-              ],
-            ),
+                if (storeProduct.recentPrices != null)
+                  for (var priceTime in storeProduct.recentPrices!)
+                  CustomCard(overhead: storeProduct.storeName, title: priceTime.price.toString(), subtitle: priceTime.timestamp)
               ],
             ),
           ],

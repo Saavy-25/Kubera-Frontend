@@ -84,10 +84,14 @@ class _ProductsScreenState extends State<ProductsScreen> {
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: CustomCard(
                       overhead: product.storeName ?? '',
-                      title: product.storeProductName,
+                      title: product.recentPrices?.isNotEmpty == true
+                          ? '\$${product.recentPrices!.first.price}'
+                          : 'No price available',
+                      subtitle: product.storeProductName,
                       onTap: () {
                         navigateToItemPage(context, product);
                       },
+                      showAddButton: true,
                     ),
                   );
                 }).toList(),

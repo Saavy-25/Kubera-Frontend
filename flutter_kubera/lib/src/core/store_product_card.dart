@@ -39,10 +39,10 @@ class StoreProductCard extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _StoreProductCardState createState() => _StoreProductCardState();
+  StoreProductCardState createState() => StoreProductCardState();
 }
 
-class _StoreProductCardState extends State<StoreProductCard> {
+class StoreProductCardState extends State<StoreProductCard> {
   bool _isEditing = false;
 
   @override
