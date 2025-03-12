@@ -15,61 +15,16 @@ class ProductGenericConfirmationScreen extends StatefulWidget {
 
 class _ProductGenericConfirmationScreenState extends State<ProductGenericConfirmationScreen> {
   void _showGenericMatchDialog(StoreProduct product) {
-    TextEditingController customOptionController = TextEditingController();
-    String? selectedMatch = product.genericMatch;
-
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Select Generic Match'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ...product.genericMatches.map((String match) {
-                return RadioListTile<String>(
-                  title: Text(match),
-                  value: match,
-                  groupValue: selectedMatch,
-                  onChanged: (String? value) {
-                    setState(() {
-                      selectedMatch = value;
-                    });
-                  },
-                );
-              }).toList(),
-              RadioListTile<String>(
-                title: TextField(
-                  controller: customOptionController,
-                  decoration: const InputDecoration(labelText: 'Enter new'),
-                ),
-                value: customOptionController.text,
-                groupValue: selectedMatch,
-                onChanged: (String? value) {
-                  setState(() {
-                    selectedMatch = value;
-                  });
-                },
-              ),
-            ],
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: const Text('Save'),
-              onPressed: () {
-                setState(() {
-                  product.genericMatch = selectedMatch!;
-                });
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
+        return GenericMatchDialog(
+          product: product,
+          onSelected: (String selectedMatch) {
+            setState(() {
+              product.genericMatch = selectedMatch;
+            });
+          },
         );
       },
     );
@@ -199,6 +154,7 @@ class _ProductGenericConfirmationScreenState extends State<ProductGenericConfirm
                 onPressed: () {
                   Navigator.of(context).pop(); // Close the dialog
                   Navigator.of(context).pop(); // Go back to the previous screen
+                  Navigator.of(context).pop(); // Go back to the scan screen
                 },
               ),
             ],
@@ -213,5 +169,92 @@ class _ProductGenericConfirmationScreenState extends State<ProductGenericConfirm
         },
       );
     }
+  }
+}
+
+class GenericMatchDialog extends StatefulWidget {
+  final StoreProduct product;
+  final ValueChanged<String> onSelected;
+
+  const GenericMatchDialog({super.key, required this.product, required this.onSelected});
+
+  @override
+  _GenericMatchDialogState createState() => _GenericMatchDialogState();
+}
+
+class _GenericMatchDialogState extends State<GenericMatchDialog> {
+  late TextEditingController customOptionController;
+  late String? selectedMatch;
+
+  @override
+  void initState() {
+    super.initState();
+    customOptionController = TextEditingController();
+    selectedMatch = widget.product.genericMatch;
+  }
+
+  @override
+  void dispose() {
+    customOptionController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Select Generic Match'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ...widget.product.genericMatches.map((String match) {
+            return RadioListTile<String>(
+              title: Text(match),
+              value: match,
+              groupValue: selectedMatch,
+              onChanged: (String? value) {
+                setState(() {
+                  selectedMatch = value;
+                });
+              },
+            );
+          }).toList(),
+          RadioListTile<String>(
+            title: TextField(
+              controller: customOptionController,
+              decoration: const InputDecoration(labelText: 'Enter New'),
+            ),
+            value: customOptionController.text,
+            groupValue: selectedMatch,
+            onChanged: (String? value) {
+              setState(() {
+                selectedMatch = value;
+              });
+            },
+          ),
+        ],
+      ),
+      actions: <Widget>[
+        TextButton(
+          child: const Text('Cancel'),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+        TextButton(
+          child: const Text('Save'),
+          onPressed: () {
+            setState(() {
+              if (customOptionController.text.isNotEmpty) {
+                widget.product.genericMatch = customOptionController.text;
+              } else {
+                widget.product.genericMatch = selectedMatch!;
+              }
+            });
+            widget.onSelected(widget.product.genericMatch);
+            Navigator.of(context).pop();
+          },
+        ),
+      ],
+    );
   }
 }
