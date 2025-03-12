@@ -62,7 +62,8 @@ class FlaskService {
 
       if (response.statusCode == 200) {
         final jsonResponse = jsonDecode(response.body);
-        return Receipt.fromJson(jsonDecode(jsonResponse['receipt']));
+        final receiptJson = jsonResponse['receipt'];
+        return Receipt.fromJson(receiptJson);
       }
       else {
         throw Exception('Failed to map receipt: ${response.statusCode}');
