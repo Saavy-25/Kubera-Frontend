@@ -10,10 +10,10 @@ import 'package:http_parser/http_parser.dart';
 
 class FlaskService {
   // when running on physical device use the ip address of the machine running the server (i.e your laptop )
-  // static const String baseUrl = 'http://10.188.80.50:5000/flutter';
+  static const String baseUrl = 'http://192.168.0.66:5000/flutter';
 
   // when running on emulator use the following
-  static const String baseUrl = 'http://localhost:5000/flutter';
+  // static const String baseUrl = 'http://localhost:5000/flutter';
 
   Future<Test> fetchTest() async {
     final response = await http.get(Uri.parse('$baseUrl/get_data'));
@@ -100,13 +100,11 @@ class FlaskService {
     }
   }
 
-  Future<List<StoreProduct>> fetchStoreProducts(List<String> ids) async {
-    if (ids.isEmpty) return [];
+  Future<List<StoreProduct>> fetchStoreProducts(String genericId) async {
+    if (genericId.isEmpty) return [];
 
-    final response = await http.post(
-      Uri.parse('$baseUrl/get_storeProducts'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'productIds': ids}),
+    final response = await http.get(
+      Uri.parse('$baseUrl/get_storeProducts/$genericId'),
     );
 
     final data = jsonDecode(response.body);
@@ -115,16 +113,23 @@ class FlaskService {
       if (data is List) {
         return List<StoreProduct>.from(data.map((item) => StoreProduct.fromJson(item)));
       } else {
-        return [];
+        return List.empty();
       }
     } 
     
     else {
-      if (data['error'] != null) {
-          throw Exception('Failed to fetch store products: ${data['error']}');
-        } else {
-          throw Exception('Failed to fetch store products: Unknown error');
-        }
+      throw Exception('Failed to fetch store products.');
+    }
+  }
+
+  Future<StoreProduct> fetchProduct(String productId) async {
+    final response = await http.get(Uri.parse('$baseUrl/get_productDetails/$productId'));
+
+    if (response.statusCode == 200) {
+      final productJson = jsonDecode(response.body);
+      return StoreProduct.fromJson(productJson);
+    } else {
+      throw Exception('Failed to fetch product');
     }
   }
 }

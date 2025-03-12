@@ -64,17 +64,17 @@ class StoreProduct {
     )).toList();
 
     return StoreProduct(
-      id: json['_id'],
+      id: json['_id'] ?? '',
+      recentPrices: recentPrices,
       lineItem: json['lineItem'] ?? '',
       count: json['count'] ?? '',
       totalPrice: json['totalPrice'] ?? 0.0,
       pricePerCount: json['pricePerCount'] ?? 0.0,
       storeName: json['storeName'] ?? '',
       date: json['date'],
-      recentPrices: recentPrices,
       storeProductName: json['storeProductName'] ?? '',
       genericMatches: genericMatches,
-      genericMatch: genericMatches[0],
+      genericMatch: genericMatches.isNotEmpty ? genericMatches[0] : '',
       genericMatchId: json['genericMatchId']
     );
   }
