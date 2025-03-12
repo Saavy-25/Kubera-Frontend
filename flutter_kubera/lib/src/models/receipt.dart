@@ -17,6 +17,10 @@ class Receipt {
     required this.products
   });
 
+  static Receipt empty() {
+    return Receipt(id: '', storeName: '', storeAddress: '', date: '', totalReceiptPrice: '', products: []);
+  }
+
   void updateStoreName(String newStoreName) {
     storeName = newStoreName;
     
