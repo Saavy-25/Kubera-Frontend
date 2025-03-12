@@ -1,18 +1,17 @@
-class PricesTimes {
+class RecentPrices {
   final double? price;
   final String? timestamp; // Converting Mongo's Date to String for now
 
-  PricesTimes({
+  RecentPrices({
     required this.price,
     required this.timestamp,
   });
 }
 
 class StoreProduct {
-  final String pk;
-  final String? unit;
-  final String genericPk;
-  final List<PricesTimes>? pricesTimes;
+  final String id;
+  final String genericId;
+  final List<RecentPrices>? recentPrices;
   final String lineItem;
   final List<String>? genericMatches;
   final String productName;
@@ -21,10 +20,9 @@ class StoreProduct {
   final String? storeAddress;
 
   StoreProduct({
-    required this.pk,
-    this.unit,
-    required this.genericPk,
-    this.pricesTimes,
+    required this.id,
+    required this.genericId,
+    this.recentPrices,
     required this.lineItem,
     this.genericMatches,
     required this.productName,
@@ -39,18 +37,17 @@ class StoreProduct {
     var genericMatches = genericMatchesFromJson.map((genericMatch) => genericMatch.toString()).toList();
 
     return StoreProduct(
-      pk: json['_id'] ?? '',
-      unit: json['unit'] ?? '',
-      genericPk: json['genericPk'] ?? '',
-      pricesTimes: (json['pricesTimes'] as List<dynamic>?)
-          ?.map((price) => PricesTimes(
+      id: json['_id'] ?? '',
+      genericId: json['genericId'] ?? '',
+      recentPrices: (json['recentPrices'] as List<dynamic>?)
+          ?.map((price) => RecentPrices(
         price: (price as List<dynamic>)[0] as double?,
         timestamp: (price[1] as String),
           ))
           .toList() ?? [],
       lineItem: json['lineItem'] ?? '',
       genericMatches: genericMatches.isNotEmpty ? genericMatches : [],
-      productName: json['productName'] ?? '',
+      productName: json['storeProductName'] ?? '',
       genericName: json['genericName'] ?? '',
       storeName: json['storeName'] ?? '',
       storeAddress: json['storeAddress'] ?? '',
@@ -59,10 +56,9 @@ class StoreProduct {
 
   Map<String, dynamic> toJson() {
     return {
-      '_id': pk,
-      'unit': unit,
-      'genericPk': genericPk,
-      'pricesTimes': pricesTimes?.map((price) => [price.price, price.timestamp?.toString()]).toList(),
+      '_id': id,
+      'genericPk': genericId,
+      'pricesTimes': recentPrices?.map((price) => [price.price, price.timestamp?.toString()]).toList(),
       'lineItem': lineItem,
       'generic_matches': genericMatches,
       'productName': productName,

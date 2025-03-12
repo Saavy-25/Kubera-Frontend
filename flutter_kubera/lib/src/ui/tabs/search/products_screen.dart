@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_kubera/src/ui/tabs/search/item_screen.dart';
 import '../../../core/card.dart';
 import 'package:flutter_kubera/src/services/flask_service.dart';
 import 'package:flutter_kubera/src/models/store_product.dart';
@@ -6,23 +7,32 @@ import 'package:flutter_kubera/src/models/store_product.dart';
 class ProductsScreen extends StatelessWidget {
   final String itemId;
   final String itemName;
-  final List<String> productIds;
+  final String genericId;
 
   const ProductsScreen({
     super.key,
     required this.itemId,
     required this.itemName,
-    required this.productIds,
+    required this.genericId,
   });
 
-  //Replace with backend call
-  Future<List<StoreProduct>> fetchProducts(List<String> productIds) async {
+  Future<List<StoreProduct>> fetchProducts(String genericId) async {
     final flaskService = FlaskService();
     try {
-      return await flaskService.fetchStoreProducts(productIds);
+      return await flaskService.fetchStoreProducts(genericId);
     } catch (e) {
       throw Exception('Failed to fetch products: $e');
     }
+  }
+
+  // Navigate to item page
+  void navigateToItemPage(BuildContext context, StoreProduct storeProduct) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ItemScreen(storeProduct: storeProduct),
+      ),
+    );
   }
 
   @override
@@ -30,7 +40,7 @@ class ProductsScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text(itemName)),
       body: FutureBuilder<List<StoreProduct>>(
-        future: fetchProducts(productIds),
+        future: fetchProducts(genericId),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -57,8 +67,8 @@ class ProductsScreen extends StatelessWidget {
                       overhead: product.storeName ?? '',
                       title: product.productName,
                       subtitle: product.storeAddress ?? '',
-                      onAdd: () {
-                        //TODO navigate to product page
+                      onTap: () {
+                        navigateToItemPage(context, product);
                       },
                     ),
                   );

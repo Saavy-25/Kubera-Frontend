@@ -35,11 +35,11 @@ class SearchScreenState extends State<SearchScreen> {
     setState(() => isLoading = false);
   }
 
-  void _navigateToItemPage(BuildContext context, String itemId, String itemName, List<String> productIds) {
+  void _navigateToProductsPage(BuildContext context, String itemId, String itemName, String genericId) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ProductsScreen(itemId: itemId, itemName: itemName),
+        builder: (context) => ProductsScreen(itemId: itemId, itemName: itemName, genericId: genericId),
       ),
     );
   }
@@ -77,7 +77,7 @@ class SearchScreenState extends State<SearchScreen> {
                             return ListTile(
                               title: Text(item.genericItem ?? "Unknown Item"),
                               subtitle: Text("Category: ${item.category}"),
-                              onTap: () => _navigateToItemPage(context, item.pk ?? "", item.genericItem ?? "", item.productIds ?? []),
+                              onTap: () => _navigateToProductsPage(context, item.pk ?? "", item.genericItem ?? "", item.pk ?? ''),
                             );
                           },
                         ),

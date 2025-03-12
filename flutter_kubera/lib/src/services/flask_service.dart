@@ -76,13 +76,11 @@ class FlaskService {
     }
   }
 
-  Future<List<StoreProduct>> fetchStoreProducts(List<String> ids) async {
-    if (ids.isEmpty) return [];
+  Future<List<StoreProduct>> fetchStoreProducts(String genericId) async {
+    if (genericId.isEmpty) return [];
 
-    final response = await http.post(
-      Uri.parse('$baseUrl/get_storeProducts'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'productIds': ids}),
+    final response = await http.get(
+      Uri.parse('$baseUrl/get_storeProducts/$genericId'),
     );
 
     final data = jsonDecode(response.body);
