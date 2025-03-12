@@ -75,9 +75,9 @@ class SearchScreenState extends State<SearchScreen> {
                           itemBuilder: (context, index) {
                             final item = searchResults[index];
                             return ListTile(
-                              title: Text(item.genericItem ?? "Unknown Item"),
+                              title: Text(item.genericName ?? "Unknown Item"),
                               subtitle: Text("Category: ${item.category}"),
-                              onTap: () => _navigateToProductsPage(context, item.pk ?? "", item.genericItem ?? "", item.pk ?? ''),
+                              onTap: () => _navigateToProductsPage(context, item.id ?? "", item.genericName ?? "", item.id ?? ''),
                             );
                           },
                         ),

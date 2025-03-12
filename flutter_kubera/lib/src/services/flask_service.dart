@@ -10,10 +10,10 @@ import 'package:http_parser/http_parser.dart';
 
 class FlaskService {
   // when running on physical device use the ip address of the machine running the server (i.e your laptop )
-  // static const String baseUrl = 'http://10.188.80.50:5000/flutter';
+  static const String baseUrl = 'http://192.168.0.66:5000/flutter';
 
   // when running on emulator use the following
-  static const String baseUrl = 'http://localhost:5000/flutter';
+  // static const String baseUrl = 'http://localhost:5000/flutter';
 
   Future<Test> fetchTest() async {
     final response = await http.get(Uri.parse('$baseUrl/get_data'));
@@ -113,16 +113,12 @@ class FlaskService {
       if (data is List) {
         return List<StoreProduct>.from(data.map((item) => StoreProduct.fromJson(item)));
       } else {
-        return [];
+        return List.empty();
       }
     } 
     
     else {
-      if (data['error'] != null) {
-          throw Exception('Failed to fetch store products: ${data['error']}');
-        } else {
-          throw Exception('Failed to fetch store products: Unknown error');
-        }
+      throw Exception('Failed to fetch store products.');
     }
   }
 

@@ -65,12 +65,7 @@ class StoreProduct {
 
     return StoreProduct(
       id: json['_id'] ?? '',
-      recentPrices: (json['recentPrices'] as List<dynamic>?)
-          ?.map((price) => RecentPrice(
-        price: (price as List<dynamic>)[0] as double?,
-        timestamp: (price[1] as String),
-          ))
-          .toList() ?? [],
+      recentPrices: recentPrices,
       lineItem: json['lineItem'] ?? '',
       count: json['count'] ?? '',
       totalPrice: json['totalPrice'] ?? 0.0,
@@ -79,7 +74,7 @@ class StoreProduct {
       date: json['date'],
       storeProductName: json['storeProductName'] ?? '',
       genericMatches: genericMatches,
-      genericMatch: genericMatches[0],
+      genericMatch: genericMatches.isNotEmpty ? genericMatches[0] : '',
       genericMatchId: json['genericMatchId']
     );
   }

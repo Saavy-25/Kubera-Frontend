@@ -21,7 +21,8 @@ class ProductsScreen extends StatelessWidget {
     try {
       return await flaskService.fetchStoreProducts(genericId);
     } catch (e) {
-      throw Exception('Failed to fetch products: $e');
+      // throw Exception('Failed to fetch products: $e');
+      return Future.value([]);
     }
   }
 
@@ -47,14 +48,14 @@ class ProductsScreen extends StatelessWidget {
           }
 
           if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
+            return Center(child: Text('${snapshot.error}'));
           }
 
           if (snapshot.hasData) {
             var products = snapshot.data!;
 
             if (products.isEmpty) {
-              return const Center(child: Text('No product of this type has been submitted'));
+              return const Center(child: Text('No product of this type has been submitted.'));
             }
 
             return Padding(
