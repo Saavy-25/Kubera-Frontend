@@ -43,11 +43,11 @@ class StoreProduct {
   }
 
   void updateProductName(String storeProductName) {
-    storeProductName = storeProductName;
+    this.storeProductName = storeProductName;
   }
 
   void updatePrice(double totalPrice) {
-    totalPrice = totalPrice;
+    this.totalPrice = totalPrice;
   }
 
   void updateGenericMatch(String newGenericMatch) {
