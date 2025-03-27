@@ -1,25 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_kubera/src/core/error_dialog.dart';
-import 'package:flutter_kubera/src/models/receipt.dart';
-import 'package:flutter_kubera/src/models/store_product.dart';
+import 'package:flutter_kubera/src/models/scanned_receipt.dart';
+import 'package:flutter_kubera/src/models/scanned_line_item.dart';
 import 'package:flutter_kubera/src/services/flask_service.dart';
 
 class ProductGenericConfirmationScreen extends StatefulWidget {
-  final Receipt receipt;
+  final ScannedReceipt scannedReceipt;
 
-  const ProductGenericConfirmationScreen({super.key, required this.receipt});
+  const ProductGenericConfirmationScreen({super.key, required this.scannedReceipt});
 
   @override
   _ProductGenericConfirmationScreenState createState() => _ProductGenericConfirmationScreenState();
 }
 
 class _ProductGenericConfirmationScreenState extends State<ProductGenericConfirmationScreen> {
-  void _showGenericMatchDialog(StoreProduct product) {
+  void _showGenericMatchDialog(ScannedLineItem product) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return GenericMatchDialog(
-          product: product,
+          scannedLineItem: product,
           onSelected: (String selectedMatch) {
             setState(() {
               product.genericMatch = selectedMatch;
@@ -49,9 +49,9 @@ class _ProductGenericConfirmationScreenState extends State<ProductGenericConfirm
             const SizedBox(height: 8),
             Expanded(
               child: ListView.builder(
-                itemCount: widget.receipt.products.length,
+                itemCount: widget.scannedReceipt.scannedLineItems.length,
                 itemBuilder: (context, index) {
-                  final product = widget.receipt.products[index];
+                  final product = widget.scannedReceipt.scannedLineItems[index];
                   return Card(
                     elevation: 3,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -120,7 +120,7 @@ class _ProductGenericConfirmationScreenState extends State<ProductGenericConfirm
                   Expanded(
                     child: ElevatedButton.icon(
                       onPressed: () { //Go to scan screen
-                        _confirmReceipt(context, widget.receipt);
+                        _confirmReceipt(context, widget.scannedReceipt);
                       },
                       label: const Text('Confirm'),
                       icon: const Icon(Icons.check),
@@ -138,9 +138,9 @@ class _ProductGenericConfirmationScreenState extends State<ProductGenericConfirm
     );
   }
 
-  Future<void> _confirmReceipt(BuildContext context, Receipt receipt) async {
+  Future<void> _confirmReceipt(BuildContext context, ScannedReceipt scannedReceipt) async {
     try {
-      await FlaskService().postReceipt(receipt);
+      await FlaskService().postReceipt(scannedReceipt);
 
       showDialog(
         context: context,
@@ -173,10 +173,10 @@ class _ProductGenericConfirmationScreenState extends State<ProductGenericConfirm
 }
 
 class GenericMatchDialog extends StatefulWidget {
-  final StoreProduct product;
+  final ScannedLineItem scannedLineItem;
   final ValueChanged<String> onSelected;
 
-  const GenericMatchDialog({super.key, required this.product, required this.onSelected});
+  const GenericMatchDialog({super.key, required this.scannedLineItem, required this.onSelected});
 
   @override
   _GenericMatchDialogState createState() => _GenericMatchDialogState();
@@ -190,7 +190,7 @@ class _GenericMatchDialogState extends State<GenericMatchDialog> {
   void initState() {
     super.initState();
     customOptionController = TextEditingController();
-    selectedMatch = widget.product.genericMatch;
+    selectedMatch = widget.scannedLineItem.genericMatch;
   }
 
   @override
@@ -206,7 +206,7 @@ class _GenericMatchDialogState extends State<GenericMatchDialog> {
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          ...widget.product.genericMatches.map((String match) {
+          ...widget.scannedLineItem.genericMatches.map((String match) {
             return RadioListTile<String>(
               title: Text(match),
               value: match,
@@ -245,12 +245,12 @@ class _GenericMatchDialogState extends State<GenericMatchDialog> {
           onPressed: () {
             setState(() {
               if (customOptionController.text.isNotEmpty) {
-                widget.product.genericMatch = customOptionController.text;
+                widget.scannedLineItem.genericMatch = customOptionController.text;
               } else {
-                widget.product.genericMatch = selectedMatch!;
+                widget.scannedLineItem.genericMatch = selectedMatch!;
               }
             });
-            widget.onSelected(widget.product.genericMatch);
+            widget.onSelected(widget.scannedLineItem.genericMatch);
             Navigator.of(context).pop();
           },
         ),

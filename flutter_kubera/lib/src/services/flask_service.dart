@@ -1,7 +1,8 @@
 
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter_kubera/src/models/receipt.dart';
+import 'package:flutter_kubera/src/models/scanned_receipt.dart';
+import 'package:flutter_kubera/src/models/scanned_line_item.dart';
 import 'package:flutter_kubera/src/models/store_product.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_kubera/src/models/test.dart';
@@ -24,7 +25,7 @@ class FlaskService {
     }
   }
 
-  Future<Receipt> processReceipt(File image) async {
+  Future<ScannedReceipt> processReceipt(File image) async {
     final request = http.MultipartRequest(
       'POST',
       Uri.parse('$baseUrl/process_receipt'),
@@ -41,7 +42,7 @@ class FlaskService {
         final responseBody = await response.stream.bytesToString();
         final jsonResponse = jsonDecode(responseBody);
         final receiptJson = jsonResponse['receipt'];
-        return Receipt.fromJson(receiptJson);
+        return ScannedReceipt.fromJson(receiptJson);
       } else {
         throw Exception('Failed to post data: ${response.statusCode}');
       }
@@ -52,7 +53,7 @@ class FlaskService {
   }
 
   // This api will call gpt to get generic matches to be verified by the user
-  Future<Receipt> mapReceipt(Receipt receipt) async {
+  Future<ScannedReceipt> mapReceipt(ScannedReceipt receipt) async {
     try {
         final response = await http.post(
         Uri.parse('$baseUrl/map_receipt'),
@@ -63,7 +64,7 @@ class FlaskService {
       if (response.statusCode == 200) {
         final jsonResponse = jsonDecode(response.body);
         final receiptJson = jsonResponse['receipt'];
-        return Receipt.fromJson(receiptJson);
+        return ScannedReceipt.fromJson(receiptJson);
       }
       else {
         throw Exception('Failed to map receipt: ${response.statusCode}');
@@ -76,7 +77,7 @@ class FlaskService {
   }
 
   // This api will post the receipt to mongo after full confirmation (product name and generic name)
-  Future<void> postReceipt(Receipt receipt) async {
+  Future<void> postReceipt(ScannedReceipt receipt) async {
     final response = await http.post(
       Uri.parse('$baseUrl/post_receipt'),
       headers: {'Content-Type': 'application/json'},

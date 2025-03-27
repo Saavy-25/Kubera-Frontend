@@ -1,12 +1,41 @@
-import 'package:flutter_kubera/src/models/store_product.dart';
+import 'package:flutter_kubera/src/models/store_address.dart';
+
+class LineItem {
+  double pricePerCount;
+  String storeProductId;
+  int count;
+
+  LineItem({
+    required this.pricePerCount,
+    required this.storeProductId,
+    required this.count,
+  });
+
+  factory LineItem.fromJson(Map<String, dynamic> json) {
+    return LineItem(
+      pricePerCount: json['pricePerCount'] ?? 0.0,
+      storeProductId: json['storeProductId'] ?? '',
+      count: json['count'] ?? 1,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'pricePerCount': pricePerCount,
+      'storeProductId': storeProductId,
+      'count': count,
+    };
+  }
+}
+
 
 class Receipt {
   final String id;
   String storeName;
-  final String storeAddress;
+  final StoreAddress storeAddress;
   String date;
   final double totalReceiptPrice;
-  List<StoreProduct> products;
+  List<LineItem> products;
 
   Receipt({
     required this.id,
@@ -18,7 +47,7 @@ class Receipt {
   });
 
   static Receipt empty() {
-    return Receipt(id: '', storeName: '', storeAddress: '', date: '', totalReceiptPrice: 0.0, products: []);
+    return Receipt(id: '', storeName: '', storeAddress: StoreAddress(), date: '', totalReceiptPrice: 0.0, products: []);
   }
 
   void updateStoreName(String newStoreName) {
@@ -32,7 +61,7 @@ class Receipt {
 
   factory Receipt.fromJson(Map<String, dynamic> json) {
     var productsFromJson = json['products'] as List? ?? [];
-    List<StoreProduct> productList = productsFromJson.map((productJson) => StoreProduct.fromJson(productJson)).toList();
+    List<LineItem> productList = productsFromJson.map((productJson) => LineItem.fromJson(productJson)).toList();
 
     return Receipt(
       id: json['_id'] ?? '',
