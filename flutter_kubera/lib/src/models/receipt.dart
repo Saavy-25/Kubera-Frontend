@@ -1,5 +1,3 @@
-import 'package:flutter_kubera/src/models/store_address.dart';
-
 class LineItem {
   double pricePerCount;
   String storeProductId;
@@ -32,7 +30,7 @@ class LineItem {
 class Receipt {
   final String id;
   String storeName;
-  final StoreAddress storeAddress;
+  final String storeAddress;
   String date;
   final double totalReceiptPrice;
   List<LineItem> products;
@@ -47,7 +45,7 @@ class Receipt {
   });
 
   static Receipt empty() {
-    return Receipt(id: '', storeName: '', storeAddress: StoreAddress(), date: '', totalReceiptPrice: 0.0, products: []);
+    return Receipt(id: '', storeName: '', storeAddress: '', date: '', totalReceiptPrice: 0.0, products: []);
   }
 
   void updateStoreName(String newStoreName) {
