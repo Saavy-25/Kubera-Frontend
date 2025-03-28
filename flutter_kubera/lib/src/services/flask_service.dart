@@ -10,10 +10,10 @@ import 'package:http_parser/http_parser.dart';
 
 class FlaskService {
   // when running on physical device use the ip address of the machine running the server (i.e your laptop )
-  static const String baseUrl = 'http://10.136.17.109:5000/flutter';
+  //static const String baseUrl = 'http://10.136.17.109:5000/flutter';
 
   // when running on emulator use the following
-  // static const String baseUrl = 'http://localhost:5000/flutter';
+   static const String baseUrl = 'http://localhost:8000/flutter';
 
   Future<Test> fetchTest() async {
     final response = await http.get(Uri.parse('$baseUrl/get_data'));
@@ -133,4 +133,21 @@ class FlaskService {
       throw Exception('Failed to fetch product');
     }
   }
+
+  // This api will post the receipt to mongo after full confirmation (product name and generic name)
+  Future<void> signup(String username, String password) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/auth/signup'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'username': username,
+        'password': password,
+      }),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to register user: ${response.statusCode}');
+    }
+  }
+  
 }
