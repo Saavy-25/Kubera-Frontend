@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_kubera/src/models/store_product.dart';
 import 'package:flutter_kubera/src/ui/tabs/search/item_screen.dart';
 import '../../../core/card.dart';
 import 'package:flutter_kubera/src/services/flask_service.dart';
-import 'package:flutter_kubera/src/models/store_product.dart';
 
 class ProductsScreen extends StatefulWidget {
   final String itemId;

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_kubera/src/models/store_product.dart';
+import 'package:flutter_kubera/src/models/scanned_line_item.dart';
 
 class StoreProductCard extends StatefulWidget {
-  final StoreProduct product;
+  final ScannedLineItem scannedLineItem;
   final ValueChanged<String> onLineItemChanged;
   final ValueChanged<String> onProductNameChanged;
   final ValueChanged<double> onPriceChanged;
@@ -22,7 +22,7 @@ class StoreProductCard extends StatefulWidget {
 
   const StoreProductCard({
     Key? key,
-    required this.product,
+    required this.scannedLineItem,
     required this.onLineItemChanged,
     required this.onProductNameChanged,
     required this.onPriceChanged,
@@ -64,25 +64,25 @@ class StoreProductCardState extends State<StoreProductCard> {
                   children: [
                     if (_isEditing) ...[
                       TextField(
-                        controller: TextEditingController(text: widget.product.lineItem),
+                        controller: TextEditingController(text: widget.scannedLineItem.lineItem),
                         decoration: const InputDecoration(labelText: 'Line Item'),
                         onChanged: widget.onLineItemChanged,
                       ),
                       TextField(
-                        controller: TextEditingController(text: widget.product.storeProductName),
+                        controller: TextEditingController(text: widget.scannedLineItem.storeProductName),
                         decoration: const InputDecoration(labelText: 'Product Name'),
                         onChanged: widget.onProductNameChanged,
                       ),
                       TextField(
-                        controller: TextEditingController(text: widget.product.totalPrice.toString()),
+                        controller: TextEditingController(text: widget.scannedLineItem.totalPrice.toString()),
                         decoration: const InputDecoration(labelText: 'Price'),
                         keyboardType: TextInputType.number,
                         onChanged: (value) => widget.onPriceChanged(double.tryParse(value) ?? 0.0),
                       ),
                     ] else ...[
-                      Text('Line Item: ${widget.product.lineItem}'),
-                      Text('Product Name: ${widget.product.storeProductName}'),
-                      Text('Price: \$${widget.product.totalPrice}'),
+                      Text('Line Item: ${widget.scannedLineItem.lineItem}'),
+                      Text('Product Name: ${widget.scannedLineItem.storeProductName}'),
+                      Text('Price: \$${widget.scannedLineItem.totalPrice}'),
                     ],
                   ],
                 ),

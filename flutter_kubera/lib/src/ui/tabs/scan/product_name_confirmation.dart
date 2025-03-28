@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_kubera/src/core/error_dialog.dart';
 import 'package:flutter_kubera/src/core/store_product_card.dart';
-import 'package:flutter_kubera/src/models/receipt.dart';
+import 'package:flutter_kubera/src/models/scanned_receipt.dart';
 import 'package:flutter_kubera/src/services/flask_service.dart';
 import 'package:flutter_kubera/src/ui/tabs/scan/product_generic_confirmation.dart';
 
 class ProductNameConfirmationScreen extends StatefulWidget {
-  final Receipt receipt;
+  final ScannedReceipt scannedReceipt;
 
-  const ProductNameConfirmationScreen({super.key, required this.receipt});
+  const ProductNameConfirmationScreen({super.key, required this.scannedReceipt});
 
   @override
   _ProductNameConfirmationScreenState createState() => _ProductNameConfirmationScreenState();
@@ -27,15 +27,15 @@ class _ProductNameConfirmationScreenState extends State<ProductNameConfirmationS
   @override
   void initState() {
     super.initState();
-    _storeNameController = TextEditingController(text: widget.receipt.storeName);
-    _dateController = TextEditingController(text: widget.receipt.date);
-    _lineItemControllers = widget.receipt.products
+    _storeNameController = TextEditingController(text: widget.scannedReceipt.storeName);
+    _dateController = TextEditingController(text: widget.scannedReceipt.date);
+    _lineItemControllers = widget.scannedReceipt.scannedLineItems
         .map((product) => TextEditingController(text: product.lineItem))
         .toList();
-    _productNameControllers = widget.receipt.products
+    _productNameControllers = widget.scannedReceipt.scannedLineItems
         .map((product) => TextEditingController(text: product.storeProductName))
         .toList();
-    _priceControllers = widget.receipt.products
+    _priceControllers = widget.scannedReceipt.scannedLineItems
         .map((product) => TextEditingController(text: product.totalPrice.toString()))
         .toList();
   }
@@ -56,15 +56,15 @@ class _ProductNameConfirmationScreenState extends State<ProductNameConfirmationS
     super.dispose();
   }
 
-  Future<void> _mapReceipt(BuildContext context, Receipt receipt) async {
+  Future<void> _mapReceipt(BuildContext context, ScannedReceipt scannedReceipt) async {
     try {
-      Receipt mappedReceipt = await FlaskService().mapReceipt(receipt);
+      ScannedReceipt mappedReceipt = await FlaskService().mapReceipt(scannedReceipt);
 
       // Navigate to the next screen
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => ProductGenericConfirmationScreen(receipt: mappedReceipt),
+          builder: (context) => ProductGenericConfirmationScreen(scannedReceipt: mappedReceipt),
         ),
       );
     } catch (e) {
@@ -113,12 +113,12 @@ class _ProductNameConfirmationScreenState extends State<ProductNameConfirmationS
                               decoration: const InputDecoration(labelText: 'Store Name'),
                               onChanged: (value) {
                                 setState(() {
-                                  widget.receipt.storeName = value;
+                                  widget.scannedReceipt.storeName = value;
                                 });
                               },
                             )
                           else
-                            Text('Store Name: ${widget.receipt.storeName}'),
+                            Text('Store Name: ${widget.scannedReceipt.storeName}'),
                           const SizedBox(height: 8),
                           if (_isEditingDate)
                             TextField(
@@ -126,12 +126,12 @@ class _ProductNameConfirmationScreenState extends State<ProductNameConfirmationS
                               decoration: const InputDecoration(labelText: 'Date'),
                               onChanged: (value) {
                                 setState(() {
-                                  widget.receipt.date = value;
+                                  widget.scannedReceipt.date = value;
                                 });
                               },
                             )
                           else
-                            Text('Date: ${widget.receipt.date}'),
+                            Text('Date: ${widget.scannedReceipt.date}'),
                         ],
                       ),
                     ),
@@ -173,11 +173,11 @@ class _ProductNameConfirmationScreenState extends State<ProductNameConfirmationS
             const SizedBox(height: 8),
             Expanded(
               child: ListView.builder(
-                itemCount: widget.receipt.products.length,
+                itemCount: widget.scannedReceipt.scannedLineItems.length,
                 itemBuilder: (context, index) {
-                  final product = widget.receipt.products[index];
+                  final product = widget.scannedReceipt.scannedLineItems[index];
                   return StoreProductCard(
-                    product: product,
+                    scannedLineItem: product,
                     onLineItemChanged: (value) {
                       setState(() {
                         product.updateLineItem(value);
@@ -218,7 +218,7 @@ class _ProductNameConfirmationScreenState extends State<ProductNameConfirmationS
                   Expanded(
                     child: ElevatedButton.icon(
                       onPressed: () { //Go to scan screen
-                        _mapReceipt(context, widget.receipt);
+                        _mapReceipt(context, widget.scannedReceipt);
                       },
                       label: const Text('Confirm'),
                       icon: const Icon(Icons.check),

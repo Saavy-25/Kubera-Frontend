@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_kubera/src/models/receipt.dart';
+import 'package:flutter_kubera/src/models/scanned_receipt.dart';
 import 'package:flutter_kubera/src/services/flask_service.dart';
 
 class ReceiptDataConfirmationScreen extends StatelessWidget {
-  final Receipt receipt;
+  final ScannedReceipt receipt;
 
   const ReceiptDataConfirmationScreen({super.key, required this.receipt});
 
-  Future<void> _confirmReceipt(BuildContext context, Receipt receipt) async {
+  Future<void> _confirmReceipt(BuildContext context, ScannedReceipt receipt) async {
     try {
       await FlaskService().postReceipt(receipt);
 
@@ -64,12 +64,12 @@ class ReceiptDataConfirmationScreen extends StatelessWidget {
             const SizedBox(height: 8),
             Expanded(
               child: ListView.builder(
-                itemCount: receipt.products.length,
+                itemCount: receipt.scannedLineItems.length,
                 itemBuilder: (context, index) {
-                  final product = receipt.products[index];
+                  final product = receipt.scannedLineItems[index];
                   return ListTile(
                     title: Text(product.lineItem),
-                    subtitle: Text('Price: \$${product.recentPrices?[0]}'),
+                    subtitle: Text('Price: \$${product.totalPrice}'),
                   );
                 },
               ),
