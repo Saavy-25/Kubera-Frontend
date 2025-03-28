@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_kubera/src/core/error_dialog.dart';
-import 'package:flutter_kubera/src/models/receipt.dart';
+import 'package:flutter_kubera/src/models/scanned_receipt.dart';
 import 'package:flutter_kubera/src/ui/tabs/scan/product_name_confirmation.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
@@ -42,7 +42,7 @@ class _ScanScreenState extends State<ScanScreen> {
   }
 
   // Process the image using Flask API
-  Future<Receipt> _processReceipt(File image) async {
+  Future<ScannedReceipt> _processReceipt(File image) async {
     try {
       setState(() {
         _isLoading = true;
@@ -58,7 +58,7 @@ class _ScanScreenState extends State<ScanScreen> {
         _isLoading = false;
       });
       _showErrorDialog('Error processing receipt. Please try again.');
-      return Receipt.empty();
+      return ScannedReceipt.empty();
     }
   }
 
@@ -139,11 +139,11 @@ class _ScanScreenState extends State<ScanScreen> {
                         : ElevatedButton.icon(
                     onPressed: () async { //Go to receipt confirmation page
                       if (_image != null) {
-                        final receipt = await _processReceipt(_image!);
+                        final scannedReceipt = await _processReceipt(_image!);
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => ProductNameConfirmationScreen(receipt: receipt),
+                            builder: (context) => ProductNameConfirmationScreen(scannedReceipt: scannedReceipt),
                           ),
                         );
                       } else {

@@ -10,49 +10,20 @@ class RecentPrice {
 
 class StoreProduct {
   final String id;
-  String lineItem;
-  int count;
-  double totalPrice;
-  double? pricePerCount;
-  final String? storeName;
-  final String? date;
-  final List<RecentPrice>? recentPrices; 
   String storeProductName;
-  final List<String> genericMatches;
-  String genericMatch;
+  final String? storeName;
   final String? genericId;
+  final List<RecentPrice>? recentPrices;
+  
 
   StoreProduct({
     required this.id,
-    required this.lineItem,
-    required this.count,
-    required this.totalPrice,
-    this.pricePerCount,
-    this.storeName,
-    this.date,
-    this.recentPrices,
     required this.storeProductName,
-    required this.genericMatches,
-    this.genericMatch = '',
+    this.storeName,
     this.genericId,
+    this.recentPrices,
   });
 
-  // Method to update the fields
-  void updateLineItem(String newLineItem) {
-    lineItem = newLineItem;
-  }
-
-  void updateProductName(String storeProductName) {
-    this.storeProductName = storeProductName;
-  }
-
-  void updatePrice(double totalPrice) {
-    this.totalPrice = totalPrice;
-  }
-
-  void updateGenericMatch(String newGenericMatch) {
-    genericMatch = newGenericMatch;
-  }
   
   factory StoreProduct.fromJson(Map<String, dynamic> json) {
     var genericMatchesFromJson = json['genericMatches'] as List? ?? [];
@@ -66,35 +37,18 @@ class StoreProduct {
     return StoreProduct(
       id: json['_id'] ?? '',
       recentPrices: recentPrices,
-      lineItem: json['lineItem'] ?? '',
-      count: json['count'] ?? 1,
-      totalPrice: json['totalPrice'] ?? 0.0,
-      pricePerCount: json['pricePerCount'] ?? 0.0,
       storeName: json['storeName'] ?? '',
-      date: json['date'],
       storeProductName: json['storeProductName'] ?? '',
-      genericMatches: genericMatches,
-      genericMatch: genericMatches.isNotEmpty ? genericMatches[0] : '',
       genericId: json['genericId']
     );
   }
 
   Map<String, dynamic> toJson() {
-    if (genericMatches.isNotEmpty) {
-      genericMatches[0] = genericMatch;
-    }
-    
     return {
       '_id': id,
-      'lineItem': lineItem,
-      'count': count,
-      'totalPrice': totalPrice,
-      'pricePerCount': pricePerCount,
       'storeName': storeName,
-      'date': date,
       'recentPrices': recentPrices?.map((price) => [price.price, price.timestamp]).toList(),
       'storeProductName': storeProductName,
-      'genericMatches': genericMatches,
       'genericId': genericId,
     };
   }
