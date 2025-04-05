@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_kubera/src/models/store_product.dart';
+import 'package:flutter_kubera/src/ui/tabs/search/item_details_card.dart';
+import 'package:flutter_kubera/src/ui/tabs/search/price_history_card.dart';
 import '../../../core/card.dart';
 
 class ItemScreen extends StatelessWidget {
@@ -26,9 +28,10 @@ class ItemScreen extends StatelessWidget {
             SizedBox(height: 16.0),
             Column(
               children: [
-                if (storeProduct.recentPrices != null)
-                  for (var priceTime in storeProduct.recentPrices!)
-                  CustomCard(overhead: storeProduct.storeName, title: priceTime.price.toString(), subtitle: 'sarah was here')
+                // if (storeProduct.recentPrices != null)
+                //   for (var priceTime in storeProduct.recentPrices!)
+                  ItemDetailsCard(storeProduct: storeProduct)
+                  PriceHistoryCard(recentPrices: storeProduct.recentPrices),
               ],
             ),
           ],
