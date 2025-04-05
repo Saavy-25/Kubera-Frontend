@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-
-import '../../../models/test.dart';
-import '../../../services/flask_service.dart';
+import 'package:flutter_kubera/src/models/test.dart';
+import '../../../../services/flask_service.dart';
 import 'package:flutter_kubera/src/core/error_dialog.dart';
+
+// class reference: https://medium.com/@pratham.patil_23302/flutter-fundamentals-crafting-a-login-signup-page-e6e518457457
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -14,9 +15,8 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen> {
   late Future<Test> futureTest;
-  TextEditingController _usernameController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
-  bool _isLoading = false;
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   @override
   void initState() {
@@ -25,22 +25,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   // Process the image using Flask API
-  Future<void> _signup(String username, String password) async {
+  Future<void> _signup(BuildContext context, String username, String password) async {
     try {
-      setState(() {
-        _isLoading = true;
-      });
-      await FlaskService().signup(username, password);
-      setState(() {
-        _isLoading = false;
-      });
-      return;
+      String status = await FlaskService().signup(username, password);
+      
+      if(status == "Success"){
+        if(context.mounted) await FlaskService().login(context, username, password);
+        if(context.mounted) Navigator.pop(context);
+      }
+      else{
+        _showErrorDialog(status);
+      }
     }
     catch (e) {
-      setState(() {
-        _isLoading = false;
-      });
-      _showErrorDialog('Error registering user. Please try again.');
+      _showErrorDialog("Sorry, an unexpected error occured. Please try again.");
     }
   }
 
@@ -54,56 +52,46 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-  // Sample code: https://github.com/toliksadovnichiy/Flutter-lab4/blob/08aadb19b0c20f5e439dc20173b5f6b03e4e4b1c/lib/parse_json_widget.dart
     @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(title: const Text("Kubera")),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
+            const SizedBox(height: 16),
             TextFormField(
               controller: _usernameController,
               //onSubmitted: fetchSearchResults,
               decoration: InputDecoration(
-                hintText: "username",
-                prefixIcon: const Icon(Icons.search),
+                hintText: "enter a new username",
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8.0),
                   borderSide: BorderSide.none,
                 ),
                 filled: true,
-              ),
-              validator: (value) {
-                if (value!.isEmpty) {
-                  return 'Please enter a username';
-                }
-                return null;
-              }
+              )
             ),
+            const SizedBox(height: 16),
             TextFormField(
               controller: _passwordController,
               //onSubmitted: fetchSearchResults,
               decoration: InputDecoration(
-                hintText: "password",
-                prefixIcon: const Icon(Icons.search),
+                hintText: "enter a new password",
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8.0),
                   borderSide: BorderSide.none,
                 ),
                 filled: true,
-              ),
-              validator: (value) {
-                if (value!.isEmpty) {
-                  return 'Please enter a password';
-                }
-                return null;
-              }
+              )
             ),
             ElevatedButton(
-                onPressed: () async {
-                  _signup(_usernameController.text, _passwordController.text);
+                onPressed: () {
+                  if(_usernameController.text != "" && _passwordController.text != ""){
+                    _signup(context, _usernameController.text, _passwordController.text);
+                  }
                   },
                 child: Text('Sign Up'),
               ),

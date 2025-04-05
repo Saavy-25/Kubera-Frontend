@@ -1,13 +1,16 @@
 
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/material.dart';
 import 'package:flutter_kubera/src/models/scanned_receipt.dart';
-import 'package:flutter_kubera/src/models/scanned_line_item.dart';
 import 'package:flutter_kubera/src/models/store_product.dart';
+import 'package:flutter_kubera/src/models/user.dart';
+import 'package:flutter_kubera/src/ui/tabs/settings/auth_provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_kubera/src/models/test.dart';
 import 'package:flutter_kubera/src/models/generic_item.dart';
 import 'package:http_parser/http_parser.dart';
+import 'package:provider/provider.dart';
 
 class FlaskService {
   // when running on physical device use the ip address of the machine running the server (i.e your laptop )
@@ -136,9 +139,9 @@ class FlaskService {
   }
 
   // This api will post the receipt to mongo after full confirmation (product name and generic name)
-  Future<void> signup(String username, String password) async {
+  Future<String> signup(String username, String password) async {
     final response = await http.post(
-      Uri.parse('$baseUrl/auth/signup'),
+      Uri.parse('$baseUrl/signup'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
         'username': username,
@@ -146,9 +149,89 @@ class FlaskService {
       }),
     );
 
-    if (response.statusCode != 200) {
-      throw Exception('Failed to register user: ${response.statusCode}');
+    final jsonResponse = jsonDecode(response.body);
+
+    if (response.statusCode == 400) { // user input error
+      return jsonResponse['message'];
+    }
+    else if (response.statusCode == 200){
+      return "Success";
+    }
+    else {
+      throw Exception('Failed to sign up: ${response.statusCode}');
     }
   }
-  
+
+  Future<String> login(BuildContext context, String username, String password) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/login'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'username': username,
+        'password': password,
+      }),
+    );
+
+    final jsonResponse = jsonDecode(response.body);
+    
+    if (response.statusCode == 400) { // user input error
+        return jsonResponse['message'];
+    }
+    else if (response.statusCode == 200){
+      User user = User.fromJson(jsonResponse['user details'], parseCookies(response.headers));
+
+      if(context.mounted) context.read<AuthState>().login(user);
+      return "Success";
+    }
+    else {
+      throw Exception('Failed to login: ${response.statusCode}');
+    }
+  }
+
+  Future<void> logout(BuildContext context) async {
+    
+    final response = await http.post(
+      Uri.parse('$baseUrl/logout'),
+      headers: userCookieHeader(context),
+    );
+
+    if (response.statusCode == 401){
+      if(context.mounted) context.read<AuthState>().logout();
+      throw Exception('Unauthorized: Session out of sync');
+    }
+    else if (response.statusCode != 200) {
+      if(context.mounted) context.read<AuthState>().logout();
+      throw Exception('Failed to logout user');
+    }
+    else{
+      if(context.mounted) context.read<AuthState>().logout();
+    }
+  }
+
+  List<Cookie> parseCookies(Map<String, String> headers) {
+    List<Cookie> cookies = [];
+      headers.forEach((k, v) {
+        if (k == 'set-cookie') {
+          cookies.add(Cookie.fromSetCookieValue(v));
+        }
+      });
+    return cookies;
+  }
+
+  Map<String,String> userCookieHeader(BuildContext context) {
+    // reference for setting cookies in header: https://stackoverflow.com/questions/52241089/how-do-i-make-an-http-request-using-cookies-on-flutter
+
+    Map<String, String> headers = {};
+    List<Cookie> cookies = context.read<AuthState>().userSession();
+    List<String> cookieHeaders = [];
+
+    // extract only the name and value from the cookie
+    for(final cookie in cookies) {
+      cookieHeaders.add(cookie.toString());
+    }
+
+    headers['Cookie'] = cookieHeaders.join('; ');
+
+    return headers;
+  }
 }

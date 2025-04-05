@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../tabs/dashboard/dashboard_screen.dart';
-import '../tabs/authentication/sign_up.dart';
 import '../tabs/search/search_screen.dart';
 import '../tabs/scan/scan_screen.dart';
 import '../tabs/shopping_list/shopping_list_screen.dart';
@@ -20,7 +19,6 @@ class _AppNavigationState extends State<AppNavigation> {
   int _selectedIndex = 0;
 
   static List<Widget> _widgetOptions(SettingsController settingsController) => [
-        const SignUpScreen(),
         const DashboardScreen(),
         SearchScreen(),
         const ScanScreen(),
@@ -43,7 +41,6 @@ class _AppNavigationState extends State<AppNavigation> {
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.dashboard), label: 'Sign Up'),
           BottomNavigationBarItem(icon: Icon(Icons.dashboard), label: 'Dashboard'),
           BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
           BottomNavigationBarItem(icon: Icon(Icons.camera_alt), label: 'Scan'),
