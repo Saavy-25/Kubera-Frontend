@@ -28,7 +28,7 @@ class ItemScreen extends StatelessWidget {
               children: [
                 if (storeProduct.recentPrices != null)
                   for (var priceTime in storeProduct.recentPrices!)
-                  CustomCard(overhead: storeProduct.storeName, title: priceTime.price.toString(), subtitle: priceTime.timestamp)
+                  CustomCard(overhead: storeProduct.storeName, title: priceTime.price.toString(), subtitle: 'sarah was here')
               ],
             ),
           ],
