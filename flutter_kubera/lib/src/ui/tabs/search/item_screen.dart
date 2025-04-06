@@ -31,7 +31,7 @@ class ItemScreen extends StatelessWidget {
                 // if (storeProduct.recentPrices != null)
                 //   for (var priceTime in storeProduct.recentPrices!)
                   ItemDetailsCard(storeProduct: storeProduct)
-                  PriceHistoryCard(recentPrices: storeProduct.recentPrices),
+                  // PriceHistoryCard(recentPrices: storeProduct.recentPrices),
               ],
             ),
           ],
