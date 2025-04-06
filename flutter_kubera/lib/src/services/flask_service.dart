@@ -14,7 +14,7 @@ import 'package:provider/provider.dart';
 
 class FlaskService {
   // when running on physical device use the ip address of the machine running the server (i.e your laptop )
-  // static const String baseUrl = 'http://10.188.82.245:8000/flutter';
+  // static const String baseUrl = 'http://10.136.26.249:8000/flutter';
 
   // when running on emulator use the following
   static const String baseUrl = 'http://localhost:8000/flutter';
@@ -80,10 +80,13 @@ class FlaskService {
   }
 
   // This api will post the receipt to mongo after full confirmation (product name and generic name)
-  Future<void> postReceipt(ScannedReceipt receipt) async {
+  Future<void> postReceipt(BuildContext context, ScannedReceipt receipt) async {
+    Map<String, String>requestHeaders =  userCookieHeader(context);
+    requestHeaders['Content-Type'] = 'application/json';
+
     final response = await http.post(
       Uri.parse('$baseUrl/post_receipt'),
-      headers: {'Content-Type': 'application/json'},
+      headers: requestHeaders,
       body: jsonEncode(receipt.toJson()),
     );
 
@@ -163,6 +166,7 @@ class FlaskService {
   }
 
   Future<String> login(BuildContext context, String username, String password) async {
+
     final response = await http.post(
       Uri.parse('$baseUrl/login'),
       headers: {'Content-Type': 'application/json'},
