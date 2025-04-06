@@ -90,6 +90,9 @@ class FlaskService {
       body: jsonEncode(receipt.toJson()),
     );
 
+    if (response.statusCode == 401) {
+      throw Exception(jsonDecode(response.body)['message']);
+    }
     if (response.statusCode != 200) {
       throw Exception('Failed to send receipt: ${response.statusCode}');
     }
