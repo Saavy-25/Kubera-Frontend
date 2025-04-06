@@ -2,7 +2,6 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter_kubera/src/models/scanned_receipt.dart';
-import 'package:flutter_kubera/src/models/scanned_line_item.dart';
 import 'package:flutter_kubera/src/models/store_product.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_kubera/src/models/test.dart';
