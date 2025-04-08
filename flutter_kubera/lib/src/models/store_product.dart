@@ -1,11 +1,30 @@
 class RecentPrice {
-  final double? price;
-  final String? timestamp; // Converting Mongo's Date to String for now
+  final double price;
+  final String lastReportDate; // Converting Mongo's Date to String for now
+  final int reportCount;
 
   RecentPrice({
     required this.price,
-    required this.timestamp,
+    required this.lastReportDate,
+    required this.reportCount,
   });
+
+  factory RecentPrice.fromJson(Map<String, dynamic> json) {
+    
+    return RecentPrice(
+      price: json['price'] as double,
+      lastReportDate: json['latestDate'] as String,
+      reportCount: json['reports'] as int,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'price': price,
+      'latestDate': lastReportDate,
+      'reports': reportCount,
+    };
+  }
 }
 
 class StoreProduct {
@@ -26,20 +45,35 @@ class StoreProduct {
 
   
   factory StoreProduct.fromJson(Map<String, dynamic> json) {
-    var genericMatchesFromJson = json['genericMatches'] as List? ?? [];
-    var genericMatches = genericMatchesFromJson.map((genericMatch) => genericMatch.toString()).toList();
     var recentPricesFromJson = json['recentPrices'] as List? ?? [];
-    List<RecentPrice> recentPrices = recentPricesFromJson.map((price) => RecentPrice(
-      price: (price as List<dynamic>)[0] as double?,
-      timestamp: (price[1] as String),
-    )).toList();
+    
+    // Validate each price object before adding it to the list
+    List<RecentPrice> recentPrices = recentPricesFromJson.map((price) {
+      try {
+        // Ensure the price conforms to the RecentPrice schema
+        if (price is Map<String, dynamic> &&
+            price.containsKey('price') &&
+            price.containsKey('lastReportDate') &&
+            price.containsKey('reports') &&
+            price['price'] is double &&
+            price['lastReportDate'] is String &&
+            price['reports'] is int) {
+          return RecentPrice.fromJson(price);
+        } else {
+          throw Exception('Invalid RecentPrice schema');
+        }
+      } catch (e) {
+        // Skip invalid entries
+        return null;
+      }
+    }).whereType<RecentPrice>().toList(); // Filter out null values
 
     return StoreProduct(
       id: json['_id'] ?? '',
       recentPrices: recentPrices,
       storeName: json['storeName'] ?? '',
       storeProductName: json['storeProductName'] ?? '',
-      genericId: json['genericId']
+      genericId: json['genericId'],
     );
   }
 
@@ -47,7 +81,7 @@ class StoreProduct {
     return {
       '_id': id,
       'storeName': storeName,
-      'recentPrices': recentPrices?.map((price) => [price.price, price.timestamp]).toList(),
+      'recentPrices': recentPrices?.map((price) => price.toJson()).toList(),
       'storeProductName': storeProductName,
       'genericId': genericId,
     };
