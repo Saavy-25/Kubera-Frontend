@@ -1,32 +1,28 @@
 class RecentPrice {
   final double price;
-  final String latestDate; // Converting Mongo's Date to String for now
-  final String oldestDate;
-  final int reports;
+  final String lastReportDate; // Converting Mongo's Date to String for now
+  final int reportCount;
 
   RecentPrice({
     required this.price,
-    required this.latestDate,
-    required this.oldestDate,
-    required this.reports,
+    required this.lastReportDate,
+    required this.reportCount,
   });
 
   factory RecentPrice.fromJson(Map<String, dynamic> json) {
     
     return RecentPrice(
       price: json['price'] as double,
-      latestDate: json['latestDate'] as String,
-      oldestDate: json['oldestDate'] as String,
-      reports: json['reports'] as int,
+      lastReportDate: json['latestDate'] as String,
+      reportCount: json['reports'] as int,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'price': price,
-      'latestDate': latestDate,
-      'oldestDate': oldestDate,
-      'reports': reports,
+      'latestDate': lastReportDate,
+      'reports': reportCount,
     };
   }
 }
@@ -57,12 +53,10 @@ class StoreProduct {
         // Ensure the price conforms to the RecentPrice schema
         if (price is Map<String, dynamic> &&
             price.containsKey('price') &&
-            price.containsKey('latestDate') &&
-            price.containsKey('oldestDate') &&
+            price.containsKey('lastReportDate') &&
             price.containsKey('reports') &&
             price['price'] is double &&
-            price['latestDate'] is String &&
-            price['oldestDate'] is String &&
+            price['lastReportDate'] is String &&
             price['reports'] is int) {
           return RecentPrice.fromJson(price);
         } else {
