@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_kubera/src/core/card.dart';
 import 'package:flutter_kubera/src/services/flask_service.dart';
 import 'package:flutter_kubera/src/models/generic_item.dart';
 import 'products_screen.dart';
