@@ -10,7 +10,7 @@ class ItemDetailsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dateDiff = DateTime.now().difference(DateTime.parse(storeProduct.recentPrices!.first.latestDate)).inDays;
+    final dateDiff = DateTime.now().difference(DateTime.parse(storeProduct.recentPrices!.first.lastReportDate)).inDays;
     return Card(
       elevation: 3,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
