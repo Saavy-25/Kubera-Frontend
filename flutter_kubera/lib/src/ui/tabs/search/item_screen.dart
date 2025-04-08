@@ -14,6 +14,33 @@ class ItemScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Mock data for recent prices
+    // final recPrice = [
+    //   RecentPrice(
+    //     price: 120.50,
+    //     latestDate: '2025-04-01',
+    //     oldestDate: '2025-03-01',
+    //     reports: 5,
+    //   ),
+    //   RecentPrice(
+    //     price: 123.50,
+    //     latestDate: '2025-04-01',
+    //     oldestDate: '2025-03-01',
+    //     reports: 6,
+    //   ),
+    //   RecentPrice(
+    //     price: 122.00,
+    //     latestDate: '2025-04-02',
+    //     oldestDate: '2025-03-02',
+    //     reports: 3,
+    //   ),
+    //   RecentPrice(
+    //     price: 119.75,
+    //     latestDate: '2025-04-03',
+    //     oldestDate: '2025-03-03',
+    //     reports: 7,
+    //   ),
+    // ];
     return Scaffold(
       appBar: AppBar(title: Text(storeProduct.storeProductName)),
       body: Padding(
@@ -28,10 +55,12 @@ class ItemScreen extends StatelessWidget {
             SizedBox(height: 16.0),
             Column(
               children: [
-                // if (storeProduct.recentPrices != null)
-                //   for (var priceTime in storeProduct.recentPrices!)
-                  ItemDetailsCard(storeProduct: storeProduct)
-                  // PriceHistoryCard(recentPrices: storeProduct.recentPrices),
+                  ItemDetailsCard(storeProduct: storeProduct),
+                  Padding(
+                    padding: const EdgeInsets.all(5.0), 
+                    child: Text("Price History at ${storeProduct.storeName}", style: Theme.of(context).textTheme.titleMedium, textAlign: TextAlign.left),
+                  ),
+                  PriceHistoryCard(recentPrices: storeProduct.recentPrices ?? []),
               ],
             ),
           ],
