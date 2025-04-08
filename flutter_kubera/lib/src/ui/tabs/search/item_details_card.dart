@@ -6,9 +6,11 @@ class ItemDetailsCard extends StatelessWidget {
   final StoreProduct storeProduct;
 
   const ItemDetailsCard({super.key, required this.storeProduct});
+  
 
   @override
   Widget build(BuildContext context) {
+    final dateDiff = DateTime.now().difference(DateTime.parse(storeProduct.recentPrices!.first.latestDate)).inDays;
     return Card(
       elevation: 3,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -43,6 +45,30 @@ class ItemDetailsCard extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.red,
+                      ),
+                    ),
+                  if (dateDiff > 1)
+                    Text(
+                        'Last reported ${dateDiff} days ago',
+                      style: const TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey,
+                      ),
+                    )
+                  else if (dateDiff == 1)
+                    const Text(
+                      'Last reported yesterday',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey,
+                      ),
+                    )
+                  else
+                    const Text(
+                      'Date not available',
+                      style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.red,
                       ),
                     ),
                 ],
