@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_kubera/src/models/store_product.dart';
 import 'package:flutter_kubera/src/ui/tabs/search/item_details_card.dart';
 import 'package:flutter_kubera/src/ui/tabs/search/price_history_card.dart';
-import '../../../core/card.dart';
 
 class ItemScreen extends StatelessWidget {
   final StoreProduct storeProduct;
