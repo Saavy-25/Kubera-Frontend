@@ -14,7 +14,7 @@ class PriceHistoryCard extends StatelessWidget {
     // Group prices by their latestDate
     final groupedPrices = <String, List<RecentPrice>>{};
     for (var recentPrice in recentPrices) {
-      groupedPrices.putIfAbsent(recentPrice.latestDate, () => []).add(recentPrice);
+      groupedPrices.putIfAbsent(recentPrice.lastReportDate, () => []).add(recentPrice);
     }
 
     return Card(
@@ -51,7 +51,7 @@ class PriceHistoryCard extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              'Reported on ${price.reports} receipts',
+                              'Reported on ${price.reportCount} receipts',
                               style: const TextStyle(
                                 fontSize: 14,
                                 color: Colors.black54,
