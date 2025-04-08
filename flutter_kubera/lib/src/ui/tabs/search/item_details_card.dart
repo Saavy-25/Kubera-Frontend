@@ -21,7 +21,8 @@ class ItemDetailsCard extends StatelessWidget {
           children: [
             Expanded(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end, // Right justify the column
+                // crossAxisAlignment: CrossAxisAlignment.end, // Right justify the column
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     storeProduct.storeProductName,
@@ -36,7 +37,7 @@ class ItemDetailsCard extends StatelessWidget {
                       '\$${storeProduct.recentPrices!.first.price.toStringAsFixed(2)}',
                       style: const TextStyle(
                         fontSize: 14,
-                        color: Colors.grey,
+                        fontWeight: FontWeight.bold
                       ),
                     )
                   else

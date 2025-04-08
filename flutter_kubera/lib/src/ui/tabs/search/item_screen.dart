@@ -18,29 +18,26 @@ class ItemScreen extends StatelessWidget {
     // final recPrice = [
     //   RecentPrice(
     //     price: 120.50,
-    //     latestDate: '2025-04-01',
-    //     oldestDate: '2025-03-01',
-    //     reports: 5,
+    //     lastReportDate: '2025-04-01',
+    //     reportCount: 5,
     //   ),
     //   RecentPrice(
     //     price: 123.50,
-    //     latestDate: '2025-04-01',
-    //     oldestDate: '2025-03-01',
-    //     reports: 6,
+    //     lastReportDate: '2025-04-01',
+    //     reportCount: 6,
     //   ),
     //   RecentPrice(
     //     price: 122.00,
-    //     latestDate: '2025-04-02',
-    //     oldestDate: '2025-03-02',
-    //     reports: 3,
+    //     lastReportDate: '2025-04-02',
+    //     reportCount: 3,
     //   ),
     //   RecentPrice(
     //     price: 119.75,
-    //     latestDate: '2025-04-03',
-    //     oldestDate: '2025-03-03',
-    //     reports: 7,
+    //     lastReportDate: '2025-04-03',
+    //     reportCount: 7,
     //   ),
     // ];
+    // storeProduct.recentPrices = recPrice;
     return Scaffold(
       appBar: AppBar(title: Text(storeProduct.storeProductName)),
       body: Padding(
@@ -49,20 +46,31 @@ class ItemScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.all(5.0), 
-              child: Text("Last Reported Prices", style: Theme.of(context).textTheme.titleMedium, textAlign: TextAlign.start)
+                  padding: const EdgeInsets.all(5.0),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "Item Details",
+                      style: Theme.of(context).textTheme.titleMedium,
+                      textAlign: TextAlign.left,
+                      ),
+                  ),
             ),
             SizedBox(height: 16.0),
-            Column(
-              children: [
-                  ItemDetailsCard(storeProduct: storeProduct),
-                  Padding(
-                    padding: const EdgeInsets.all(5.0), 
-                    child: Text("Price History at ${storeProduct.storeName}", style: Theme.of(context).textTheme.titleMedium, textAlign: TextAlign.left),
-                  ),
-                  PriceHistoryCard(recentPrices: storeProduct.recentPrices ?? []),
-              ],
+            ItemDetailsCard(storeProduct: storeProduct),
+            Padding(
+            padding: const EdgeInsets.all(5.0),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                "Price History at ${storeProduct.storeName}",
+                style: Theme.of(context).textTheme.titleMedium,
+                textAlign: TextAlign.left,
+                ),
+              ),
             ),
+            PriceHistoryCard(recentPrices: storeProduct.recentPrices ?? []),
+              
           ],
         ),
       ),
