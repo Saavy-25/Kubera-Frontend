@@ -1,7 +1,9 @@
 
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter_kubera/src/models/receipt.dart';
+import 'package:flutter_kubera/src/models/scanned_receipt.dart';
+import 'package:flutter_kubera/src/models/scanned_line_item.dart';
+import 'package:flutter_kubera/src/models/store_product.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_kubera/src/models/test.dart';
 import 'package:flutter_kubera/src/models/generic_item.dart';
@@ -9,10 +11,10 @@ import 'package:http_parser/http_parser.dart';
 
 class FlaskService {
   // when running on physical device use the ip address of the machine running the server (i.e your laptop )
-  static const String baseUrl = 'http://192.168.0.66:5000/flutter';
+  // static const String baseUrl = 'http://10.188.82.245:8000/flutter';
 
   // when running on emulator use the following
-  // static const String baseUrl = 'http://localhost:5000/flutter';
+  static const String baseUrl = 'http://localhost:8000/flutter';
 
   Future<Test> fetchTest() async {
     final response = await http.get(Uri.parse('$baseUrl/get_data'));
@@ -23,7 +25,7 @@ class FlaskService {
     }
   }
 
-  Future<Receipt> processReceipt(File image) async {
+  Future<ScannedReceipt> processReceipt(File image) async {
     final request = http.MultipartRequest(
       'POST',
       Uri.parse('$baseUrl/process_receipt'),
@@ -40,7 +42,7 @@ class FlaskService {
         final responseBody = await response.stream.bytesToString();
         final jsonResponse = jsonDecode(responseBody);
         final receiptJson = jsonResponse['receipt'];
-        return Receipt.fromJson(receiptJson);
+        return ScannedReceipt.fromJson(receiptJson);
       } else {
         throw Exception('Failed to post data: ${response.statusCode}');
       }
@@ -50,7 +52,32 @@ class FlaskService {
 
   }
 
-  Future<void> postReceipt(Receipt receipt) async {
+  // This api will call gpt to get generic matches to be verified by the user
+  Future<ScannedReceipt> mapReceipt(ScannedReceipt receipt) async {
+    try {
+        final response = await http.post(
+        Uri.parse('$baseUrl/map_receipt'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(receipt.toJson()),
+      );
+
+      if (response.statusCode == 200) {
+        final jsonResponse = jsonDecode(response.body);
+        final receiptJson = jsonResponse['receipt'];
+        return ScannedReceipt.fromJson(receiptJson);
+      }
+      else {
+        throw Exception('Failed to map receipt: ${response.statusCode}');
+      }
+
+    }
+    catch (e) {
+      throw Exception('Failed to map receipt: $e');
+    }
+  }
+
+  // This api will post the receipt to mongo after full confirmation (product name and generic name)
+  Future<void> postReceipt(ScannedReceipt receipt) async {
     final response = await http.post(
       Uri.parse('$baseUrl/post_receipt'),
       headers: {'Content-Type': 'application/json'},
@@ -72,6 +99,39 @@ class FlaskService {
       return List<GenericItem>.from(data.map((item) => GenericItem.fromJson(item)));
     } else {
       throw Exception('Failed to fetch search results');
+    }
+  }
+
+  Future<List<StoreProduct>> fetchStoreProducts(String genericId) async {
+    if (genericId.isEmpty) return [];
+
+    final response = await http.get(
+      Uri.parse('$baseUrl/get_storeProducts/$genericId'),
+    );
+
+    final data = jsonDecode(response.body);
+    
+    if (response.statusCode == 200) {
+      if (data is List) {
+        return List<StoreProduct>.from(data.map((item) => StoreProduct.fromJson(item)));
+      } else {
+        return List.empty();
+      }
+    } 
+    
+    else {
+      throw Exception('Failed to fetch store products.');
+    }
+  }
+
+  Future<StoreProduct> fetchProduct(String productId) async {
+    final response = await http.get(Uri.parse('$baseUrl/get_productDetails/$productId'));
+
+    if (response.statusCode == 200) {
+      final productJson = jsonDecode(response.body);
+      return StoreProduct.fromJson(productJson);
+    } else {
+      throw Exception('Failed to fetch product');
     }
   }
 }

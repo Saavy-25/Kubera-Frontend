@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_kubera/src/models/receipt.dart';
-import 'package:flutter_kubera/src/ui/tabs/scan/receipt_data_confirmation.dart';
+import 'package:flutter_kubera/src/core/error_dialog.dart';
+import 'package:flutter_kubera/src/models/scanned_receipt.dart';
+import 'package:flutter_kubera/src/ui/tabs/scan/product_name_confirmation.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
@@ -16,6 +17,7 @@ class ScanScreen extends StatefulWidget {
 class _ScanScreenState extends State<ScanScreen> {
   File? _image;
   final ImagePicker _picker = ImagePicker();
+  bool _isLoading = false;
 
   //Take photo with camera
   Future<void> _takePicture() async {
@@ -40,9 +42,34 @@ class _ScanScreenState extends State<ScanScreen> {
   }
 
   // Process the image using Flask API
-  Future<Receipt> _processImage(File image) async {
-    final processedReceipt = await FlaskService().processReceipt(image);
-    return processedReceipt;
+  Future<ScannedReceipt> _processReceipt(File image) async {
+    try {
+      setState(() {
+        _isLoading = true;
+      });
+      final processedReceipt = await FlaskService().processReceipt(image);
+      setState(() {
+        _isLoading = false;
+      });
+      return processedReceipt;
+    }
+    catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      _showErrorDialog('Error processing receipt. Please try again.');
+      return ScannedReceipt.empty();
+    }
+  }
+
+  // Show error dialog
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return ErrorDialog(message: message);
+      },
+    );
   }
 
   @override
@@ -107,19 +134,20 @@ class _ScanScreenState extends State<ScanScreen> {
                 padding: const EdgeInsets.only(top: 10.0),
                 child: SizedBox(
                   width: double.infinity,
-                  child: ElevatedButton.icon(
+                  child: _isLoading
+                        ? const Center(child: CircularProgressIndicator())
+                        : ElevatedButton.icon(
                     onPressed: () async { //Go to receipt confirmation page
                       if (_image != null) {
-                        final receipt = await _processImage(_image!);
+                        final scannedReceipt = await _processReceipt(_image!);
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => ReceiptDataConfirmationScreen(receipt: receipt),
+                            builder: (context) => ProductNameConfirmationScreen(scannedReceipt: scannedReceipt),
                           ),
                         );
                       } else {
-                      // TODO: Show error message
-                        print('No image selected');
+                        _showErrorDialog('No image selected. Please select an image first.');
                       }
                     },
                     label: const Text('Proceed'),
@@ -129,7 +157,7 @@ class _ScanScreenState extends State<ScanScreen> {
                     ),
                   ),
                 ),
-              ),
+              ),              
           ],
         ),
       ),

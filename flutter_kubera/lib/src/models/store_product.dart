@@ -1,56 +1,55 @@
+class RecentPrice {
+  final double? price;
+  final String? timestamp; // Converting Mongo's Date to String for now
+
+  RecentPrice({
+    required this.price,
+    required this.timestamp,
+  });
+}
 
 class StoreProduct {
-  final String? pk;
-  final String? unit;
-  final String? genericPk;
-  final double price;
-  final DateTime date;
-  final String lineItem;
-  final List<String>? genericMatches;
-  final String? productName;
-  final String? genericName;
+  final String id;
+  String storeProductName;
+  final String? storeName;
+  final String? genericId;
+  final List<RecentPrice>? recentPrices;
+  
 
   StoreProduct({
-    required this.pk,
-    required this.unit,
-    required this.genericPk,
-    required this.price,
-    required this.date,
-    required this.lineItem,
-    required this.genericMatches,
-    required this.productName,
-    required this.genericName,
+    required this.id,
+    required this.storeProductName,
+    this.storeName,
+    this.genericId,
+    this.recentPrices,
   });
 
-
+  
   factory StoreProduct.fromJson(Map<String, dynamic> json) {
-    var genericMatchesFromJson = json['generic_matches'] as List? ?? [];
+    var genericMatchesFromJson = json['genericMatches'] as List? ?? [];
     var genericMatches = genericMatchesFromJson.map((genericMatch) => genericMatch.toString()).toList();
+    var recentPricesFromJson = json['recentPrices'] as List? ?? [];
+    List<RecentPrice> recentPrices = recentPricesFromJson.map((price) => RecentPrice(
+      price: (price as List<dynamic>)[0] as double?,
+      timestamp: (price[1] as String),
+    )).toList();
 
     return StoreProduct(
-      pk: json['pk'],
-      unit: json['unit'],
-      genericPk: json['generic_pk'],
-      price: json['price']?.toDouble(),
-      date: DateTime.parse(json['date']),
-      lineItem: json['line_item'],
-      genericMatches: genericMatches,
-      productName: json['product_name'],
-      genericName: json['generic_name'],
+      id: json['_id'] ?? '',
+      recentPrices: recentPrices,
+      storeName: json['storeName'] ?? '',
+      storeProductName: json['storeProductName'] ?? '',
+      genericId: json['genericId']
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'pk': pk,
-      'unit': unit,
-      'generic_pk': genericPk,
-      'price': price,
-      'date': date.toIso8601String(),
-      'line_item': lineItem,
-      'generic_matches': genericMatches,
-      'product_name': productName,
-      'generic_name': genericName,
+      '_id': id,
+      'storeName': storeName,
+      'recentPrices': recentPrices?.map((price) => [price.price, price.timestamp]).toList(),
+      'storeProductName': storeProductName,
+      'genericId': genericId,
     };
   }
 }

@@ -24,21 +24,24 @@ class ShoppingListScreen extends StatelessWidget {
         itemCount: items.length,
         itemBuilder: (context, index) {
           final item = items[index];
-          return CustomCard(
-            title: item['price'] ?? 'Unknown Item',
-            overhead: item['store'],
-            subtitle: item['product'],
-            showAddButton: true,
-            onAdd: () => _handleAddItem(item['price']),
-            onTap: () {
-              /*Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ShoppingListDetailsScreen(itemId: item['id']),
-                ),
-              );
-              */
-            },
+          return Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: CustomCard(
+              title: item['price'] ?? 'Unknown Item',
+              overhead: item['store'],
+              subtitle: item['product'],
+              showAddButton: true,
+              onAdd: () => _handleAddItem(item['price']),
+              onTap: () {
+                /*Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ShoppingListDetailsScreen(itemId: item['id']),
+                  ),
+                );
+                */
+              },
+            ),
           );
         },
       ),
