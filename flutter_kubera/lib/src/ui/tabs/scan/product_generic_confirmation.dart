@@ -140,7 +140,7 @@ class _ProductGenericConfirmationScreenState extends State<ProductGenericConfirm
 
   Future<void> _confirmReceipt(BuildContext context, ScannedReceipt scannedReceipt) async {
     try {
-      await FlaskService().postReceipt(scannedReceipt);
+      await FlaskService().postReceipt(context, scannedReceipt);
 
       showDialog(
         context: context,
