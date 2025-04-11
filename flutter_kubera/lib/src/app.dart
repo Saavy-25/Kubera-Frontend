@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:provider/provider.dart';
 
 import 'ui/navigation/app_navigation.dart';
 import 'ui/tabs/settings/settings_controller.dart';
+import 'ui/tabs/settings/auth_provider.dart';
 
 import 'core/themes.dart';
 
@@ -18,7 +20,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListenableBuilder(
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) => AuthState(),
+        ),
+      ],
+      child: ListenableBuilder(
       listenable: settingsController,
       builder: (BuildContext context, Widget? child) {
         return MaterialApp(
@@ -38,9 +46,11 @@ class MyApp extends StatelessWidget {
           darkTheme: CustomThemes.darkTheme,
           themeMode: settingsController.themeMode,
 
-          home: AppNavigation(settingsController: settingsController),
-        );
-      },
-    );
+          // Make AppNavigation a Consumer
+          home: AppNavigation(settingsController: settingsController)
+          );
+      }
+        )
+      );
   }
 }

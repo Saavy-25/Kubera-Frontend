@@ -9,7 +9,7 @@ class ReceiptDataConfirmationScreen extends StatelessWidget {
 
   Future<void> _confirmReceipt(BuildContext context, ScannedReceipt receipt) async {
     try {
-      await FlaskService().postReceipt(receipt);
+      await FlaskService().postReceipt(context, receipt);
 
       showDialog(
         context: context,
