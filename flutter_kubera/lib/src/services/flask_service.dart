@@ -1,6 +1,7 @@
 
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter_kubera/src/models/dashboard.dart';
 import 'package:flutter_kubera/src/models/scanned_receipt.dart';
 import 'package:flutter_kubera/src/models/scanned_line_item.dart';
 import 'package:flutter_kubera/src/models/store_product.dart';
@@ -134,4 +135,18 @@ class FlaskService {
       throw Exception('Failed to fetch product');
     }
   }
+  
+  Future<DashboardData?> fetchDashboardData(String userId) async {
+    final response = await http.get(Uri.parse('$baseUrl/get_dashboard_data/$userId'));
+
+  if (response.statusCode == 200) {
+    final jsonBody = jsonDecode(response.body);
+    if (jsonBody is Map<String, dynamic> && jsonBody.containsKey('message')) { // no receipts scanned
+      return null;
+    }
+    return DashboardData.fromJson(jsonBody);
+  } else {
+    throw Exception("Failed to load dashboard data: ${response.statusCode}");
+  }
+}
 }
