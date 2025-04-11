@@ -13,16 +13,16 @@ class RecentPrice {
     
     return RecentPrice(
       price: json['price'] as double,
-      lastReportDate: json['latestDate'] as String,
-      reportCount: json['reports'] as int,
+      lastReportDate: json['lastReportDate'] as String,
+      reportCount: json['reportCount'] as int,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'price': price,
-      'latestDate': lastReportDate,
-      'reports': reportCount,
+      'lastReportDate': lastReportDate,
+      'reportCount': reportCount,
     };
   }
 }
@@ -51,13 +51,7 @@ class StoreProduct {
     List<RecentPrice> recentPrices = recentPricesFromJson.map((price) {
       try {
         // Ensure the price conforms to the RecentPrice schema
-        if (price is Map<String, dynamic> &&
-            price.containsKey('price') &&
-            price.containsKey('lastReportDate') &&
-            price.containsKey('reports') &&
-            price['price'] is double &&
-            price['lastReportDate'] is String &&
-            price['reports'] is int) {
+        if (price) {
           return RecentPrice.fromJson(price);
         } else {
           throw Exception('Invalid RecentPrice schema');
