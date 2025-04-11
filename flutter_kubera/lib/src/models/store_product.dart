@@ -1,5 +1,5 @@
 class RecentPrice {
-  final double price;
+  final String price;
   final String lastReportDate; // Converting Mongo's Date to String for now
   final int reportCount;
 
@@ -12,7 +12,7 @@ class RecentPrice {
   factory RecentPrice.fromJson(Map<String, dynamic> json) {
     
     return RecentPrice(
-      price: json['price'] as double,
+      price: json['price'] as String,
       lastReportDate: json['lastReportDate'] as String,
       reportCount: json['reportCount'] as int,
     );
@@ -51,7 +51,7 @@ class StoreProduct {
     List<RecentPrice> recentPrices = recentPricesFromJson.map((price) {
       try {
         // Ensure the price conforms to the RecentPrice schema
-        if (price) {
+        if (price.containsKey('price')) {
           return RecentPrice.fromJson(price);
         } else {
           throw Exception('Invalid RecentPrice schema');

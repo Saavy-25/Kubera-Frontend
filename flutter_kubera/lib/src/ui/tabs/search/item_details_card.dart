@@ -34,7 +34,7 @@ class ItemDetailsCard extends StatelessWidget {
                   const SizedBox(height: 8),
                   if (storeProduct.recentPrices != null && storeProduct.recentPrices!.isNotEmpty)
                     Text(
-                      '\$${storeProduct.recentPrices!.first.price.toStringAsFixed(2)}',
+                      '\$${storeProduct.recentPrices!.first.price}',
                       style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold

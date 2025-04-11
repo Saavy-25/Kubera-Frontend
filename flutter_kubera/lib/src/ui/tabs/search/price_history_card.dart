@@ -58,7 +58,7 @@ class PriceHistoryCard extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              '\$${price.price.toStringAsFixed(2)}',
+                              '\$${price.price}',
                               style: const TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
