@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_kubera/src/models/store_product.dart';
+import 'package:flutter_kubera/src/ui/tabs/shopping_list/add_to_list_dialog.dart';
 
 class CustomCard extends StatelessWidget {
   final String? overhead;
@@ -10,10 +12,13 @@ class CustomCard extends StatelessWidget {
   final bool showCheckbox;
   final bool showDeleteButton;
   final bool showAddButton;
+  final bool showAddToShoppingListButton;
   final bool isChecked;
   final ValueChanged<bool?>? onCheckboxChanged;
   final VoidCallback? onDelete;
   final VoidCallback? onAdd;
+
+  final StoreProduct? storeProduct;
 
   const CustomCard({
     super.key,
@@ -24,10 +29,12 @@ class CustomCard extends StatelessWidget {
     this.showCheckbox = false,
     this.showDeleteButton = false,
     this.showAddButton = false,
+    this.showAddToShoppingListButton = false,
     this.isChecked = false,
     this.onCheckboxChanged,
     this.onDelete,
     this.onAdd,
+    this.storeProduct,
   });
 
   @override
@@ -85,6 +92,24 @@ class CustomCard extends StatelessWidget {
                 IconButton(
                   icon: const Icon(Icons.add),
                   onPressed: onAdd,
+                ),
+              ],
+              if (showAddToShoppingListButton) ...[
+                IconButton(
+                  icon: const Icon(Icons.add_shopping_cart),
+                  onPressed: () {
+                    // Add your add to shopping list logic here
+                    if (storeProduct != null) {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AddToListDialog(storeProduct: storeProduct!),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('No product available to add to the shopping list.')),
+                      );
+                    }
+                  },
                 ),
               ],
             ],
