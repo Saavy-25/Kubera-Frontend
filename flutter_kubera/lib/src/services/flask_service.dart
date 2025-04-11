@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter_kubera/src/models/scanned_receipt.dart';
 import 'package:flutter_kubera/src/models/scanned_line_item.dart';
+import 'package:flutter_kubera/src/models/shopping_list.dart';
 import 'package:flutter_kubera/src/models/store_product.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_kubera/src/models/test.dart';
@@ -134,4 +135,85 @@ class FlaskService {
       throw Exception('Failed to fetch product');
     }
   }
+
+  // This api will add a store product to a user's shopping list
+  Future<void> addItemToList(String listId, String productId, String productName) async {
+    var body = {
+      'listId': listId,
+      'storeProductId': productId,
+      'productName': productName,
+    };
+
+    final response = await http.post(
+      Uri.parse('$baseUrl/add_item_to_list'),
+      headers: {'Content-Type': 'application/json'}, // TODO: Add cookie headers
+      body: jsonEncode(body),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to add product to shopping list');
+    }
+  }
+
+  // This api will delete a store product from a user's shopping list
+  Future<void> deleteFromShoppingList(String productId) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/remove_from_shopping_list'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'product_id': productId}),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to remove product from shopping list');
+    }
+  }
+
+  // This api will fetch the user's shopping list list of shopping list ID's and names
+  Future<List<ShoppingList>> getUsersShoppingLists() async {
+  //   return [
+  //     ShoppingList(
+  //   id: '1',
+  //   listName: 'Groceries',
+  //   date: '2025-04-10',
+  //   items: [
+  //     ListItem(productName: 'Milk', storeProductId: '101', isChecked: false),
+  //     ListItem(productName: 'Bread', storeProductId: '102', isChecked: true),
+  //     ListItem(productName: 'Eggs', storeProductId: '103', isChecked: false),
+  //   ],
+  // ),
+  // ShoppingList(
+  //   id: '2',
+  //   listName: 'Strawberry Tart',
+  //   date: '2025-04-09',
+  //   items: [
+  //     ListItem(productName: 'Strawberry', storeProductId: '201', isChecked: false),
+  //     ListItem(productName: 'Flour', storeProductId: '202', isChecked: true),
+  //   ],
+  // ),
+  // ShoppingList(
+  //   id: '3',
+  //   listName: 'Curry',
+  //   date: '2025-04-08',
+  //   items: [
+  //     ListItem(productName: 'Chicken', storeProductId: '301', isChecked: true),
+  //     ListItem(productName: 'Potato', storeProductId: '302', isChecked: false),
+  //   ],
+  // ),
+  //   ];
+
+    final response = await http.get( 
+      Uri.parse('$baseUrl/get_user_lists'), 
+      headers: {
+      'Content-Type': 'application/json',
+      // TODO: Cookie headers
+    });
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(response.body);
+      return List<ShoppingList>.from(data.map((item) => ShoppingList.fromJson(item)));
+    } else {
+      throw Exception('Failed to get users shopping lists');
+    }
+  }
+
 }
