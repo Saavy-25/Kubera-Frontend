@@ -65,7 +65,7 @@ class StoreProduct {
     return StoreProduct(
       id: json['_id'] ?? '',
       recentPrices: recentPrices,
-      storeName: json['storeName'] ?? '',
+      storeName: json['storeName']?.toString().toUpperCase() ?? '',
       storeProductName: json['storeProductName'] ?? '',
       genericId: json['genericId'],
     );

@@ -45,28 +45,28 @@ class ItemScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-                  padding: const EdgeInsets.all(5.0),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      "Item Details",
-                      style: Theme.of(context).textTheme.titleMedium,
-                      textAlign: TextAlign.left,
-                      ),
+              padding: const EdgeInsets.all(5.0),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "Item Details",
+                  style: Theme.of(context).textTheme.titleMedium,
+                  textAlign: TextAlign.left,
                   ),
-            ),
-            SizedBox(height: 16.0),
-            ItemDetailsCard(storeProduct: storeProduct),
-            Padding(
-            padding: const EdgeInsets.all(5.0),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                "Price History at ${storeProduct.storeName}",
-                style: Theme.of(context).textTheme.titleMedium,
-                textAlign: TextAlign.left,
-                ),
               ),
+            ),
+            ItemDetailsCard(storeProduct: storeProduct),
+            const SizedBox(height: 16.0),
+            Padding(
+              padding: const EdgeInsets.all(5.0),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "Price History at ${storeProduct.storeName}",
+                  style: Theme.of(context).textTheme.titleMedium,
+                  textAlign: TextAlign.left,
+                  ),
+                ),
             ),
             PriceHistoryCard(recentPrices: storeProduct.recentPrices ?? []),
               

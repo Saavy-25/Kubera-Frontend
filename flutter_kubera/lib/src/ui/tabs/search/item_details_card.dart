@@ -36,7 +36,7 @@ class ItemDetailsCard extends StatelessWidget {
                     Text(
                       '\$${storeProduct.recentPrices!.first.price}',
                       style: const TextStyle(
-                        fontSize: 14,
+                        fontSize: 21,
                         fontWeight: FontWeight.bold
                       ),
                     )
