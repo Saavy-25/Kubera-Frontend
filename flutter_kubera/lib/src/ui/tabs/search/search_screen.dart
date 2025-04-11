@@ -16,6 +16,22 @@ class SearchScreenState extends State<SearchScreen> {
   bool isLoading = false;
   TextEditingController searchController = TextEditingController();
 
+  @override
+  void initState() {
+    super.initState();
+    // Add a listener to update the UI when text changes
+    searchController.addListener(() {
+      setState(() {}); // Trigger a rebuild to show/hide the suffix icon
+    });
+  }
+
+  @override
+  void dispose() {
+    // Dispose of the controller when the widget is removed
+    searchController.dispose();
+    super.dispose();
+  }
+
   void fetchSearchResults(String query) async {
     if (query.isEmpty) {
       setState(() => searchResults = []);
@@ -57,6 +73,15 @@ class SearchScreenState extends State<SearchScreen> {
               decoration: InputDecoration(
                 hintText: "Search",
                 prefixIcon: const Icon(Icons.search),
+                suffixIcon: searchController.text.isNotEmpty
+                    ? IconButton(
+                        icon: const Icon(Icons.clear),
+                        onPressed: () {
+                          searchController.clear();
+                          setState(() => searchResults = []); // Clear results
+                        },
+                      )
+                    : null,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8.0),
                   borderSide: BorderSide.none,
@@ -66,7 +91,7 @@ class SearchScreenState extends State<SearchScreen> {
             ),
             const SizedBox(height: 10),
             isLoading
-                ? CircularProgressIndicator()
+                ? const CircularProgressIndicator()
                 : searchResults.isNotEmpty
                     ? Expanded(
                         child: ListView.builder(
@@ -75,13 +100,15 @@ class SearchScreenState extends State<SearchScreen> {
                             final item = searchResults[index];
                             return ListTile(
                               title: Text(item.genericName ?? "Unknown Item"),
-                              subtitle: Text("Category: ${item.category}"),
                               onTap: () => _navigateToProductsPage(context, item.id ?? "", item.genericName ?? "", item.id ?? ''),
+                              minTileHeight: 1,
                             );
                           },
                         ),
                       )
-                    : Expanded(child: Center(child: Text("No results found"))),
+                    : const Expanded(
+                        child: Center(child: Text("No results found")),
+                      ),
           ],
         ),
       ),
