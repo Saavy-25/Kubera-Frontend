@@ -180,49 +180,61 @@ class FlaskService {
 
   // This api will fetch the user's shopping list list of shopping list ID's and names
   Future<List<ShoppingList>> getUsersShoppingLists() async {
-  //   return [
-  //     ShoppingList(
-  //   id: '1',
-  //   listName: 'Groceries',
-  //   date: '2025-04-10',
-  //   items: [
-  //     ListItem(productName: 'Milk', storeProductId: '101', isChecked: false),
-  //     ListItem(productName: 'Bread', storeProductId: '102', isChecked: true),
-  //     ListItem(productName: 'Eggs', storeProductId: '103', isChecked: false),
-  //   ],
-  // ),
-  // ShoppingList(
-  //   id: '2',
-  //   listName: 'Strawberry Tart',
-  //   date: '2025-04-09',
-  //   items: [
-  //     ListItem(productName: 'Strawberry', storeProductId: '201', isChecked: false),
-  //     ListItem(productName: 'Flour', storeProductId: '202', isChecked: true),
-  //   ],
-  // ),
-  // ShoppingList(
-  //   id: '3',
-  //   listName: 'Curry',
-  //   date: '2025-04-08',
-  //   items: [
-  //     ListItem(productName: 'Chicken', storeProductId: '301', isChecked: true),
-  //     ListItem(productName: 'Potato', storeProductId: '302', isChecked: false),
-  //   ],
-  // ),
-  //   ];
+    return [
+      ShoppingList(
+    id: '1',
+    listName: 'Groceries',
+    date: '2025-04-10',
+    items: [
+      ListItem(productName: 'Milk', storeProductId: '101', isChecked: false),
+      ListItem(productName: 'Bread', storeProductId: '102', isChecked: true),
+      ListItem(productName: 'Eggs', storeProductId: '103', isChecked: false),
+    ],
+  ),
+  ShoppingList(
+    id: '2',
+    listName: 'Strawberry Tart',
+    date: '2025-04-09',
+    items: [
+      ListItem(productName: 'Strawberry', storeProductId: '201', isChecked: false),
+      ListItem(productName: 'Flour', storeProductId: '202', isChecked: true),
+    ],
+  ),
+  ShoppingList(
+    id: '3',
+    listName: 'Curry',
+    date: '2025-04-08',
+    items: [
+      ListItem(productName: 'Chicken', storeProductId: '301', isChecked: true),
+      ListItem(productName: 'Potato', storeProductId: '302', isChecked: false),
+    ],
+  ),
+    ];
 
-    final response = await http.get( 
-      Uri.parse('$baseUrl/get_user_lists'), 
-      headers: {
-      'Content-Type': 'application/json',
-      // TODO: Cookie headers
-    });
+    // final response = await http.get( 
+    //   Uri.parse('$baseUrl/get_user_lists'), 
+    //   headers: {
+    //   'Content-Type': 'application/json',
+    //   // TODO: Cookie headers
+    // });
 
-    if (response.statusCode == 200) {
-      final List<dynamic> data = jsonDecode(response.body);
-      return List<ShoppingList>.from(data.map((item) => ShoppingList.fromJson(item)));
-    } else {
-      throw Exception('Failed to get users shopping lists');
+    // if (response.statusCode == 200) {
+    //   final List<dynamic> data = jsonDecode(response.body);
+    //   return List<ShoppingList>.from(data.map((item) => ShoppingList.fromJson(item)));
+    // } else {
+    //   throw Exception('Failed to get users shopping lists');
+    // }
+  }
+
+  Future<void> createShoppingList(String listName, BuildContext context) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/create_list'),
+      headers: userCookieHeader(context),
+      body: jsonEncode({'listName': listName}),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to create shopping list');
     }
   }
 
