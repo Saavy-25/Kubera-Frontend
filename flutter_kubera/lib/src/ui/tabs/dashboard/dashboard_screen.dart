@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fl_chart/fl_chart.dart';
 import '../../../models/dashboard.dart';
 import '../../../models/test.dart';
 import '../../../services/flask_service.dart';
@@ -8,73 +7,74 @@ import 'line_chart.dart';
 class DashboardScreen extends StatefulWidget {
   DashboardScreen({super.key});
 
-  final DashboardData fakeData = DashboardData(
-    userId: "fakeUserID",
-    weeklySpending: {
-      "2024-03-31": 30.0,
-      "2024-04-07": 25.0,
-      "2024-04-14": 35.0,
-      "2024-04-21": 40.0,
-      "2024-04-28": 50.0,
-    },
-    monthlySpending: {
-      "2024-03": 30.0,
-      "2024-04": 150.0,
-    },
-    yearlySpending: {
-      "2024": 180.0,
-    },
-    averageGroceryRunCost: 40.0,
-    mostExpensiveItem: MostExpensiveItem(
-      name: "Organic Avocados",
-      price: 5.99,
-      date: "2024-04-05",
-    ),
-    favoriteItems: [
-      FavoriteItem(date: "2024-04", name: "Apples", frequency: 15),
-      FavoriteItem(date: "2024-03", name: "Bananas", frequency: 12),
-    ],
-  );
-
   @override
   _DashboardScreenState createState() => _DashboardScreenState();
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
   late Future<Test> futureTest;
+  late Future<DashboardData?> dashboardData;
   bool _isExpanded = false; // expanding favorite items
 
   @override
   void initState() {
     super.initState();
     futureTest = FlaskService().fetchTest();
+    dashboardData = FlaskService().fetchDashboardData(context);
   }
 
   @override
   Widget build(BuildContext context) {
-    final dataToGraphWeekly = widget.fakeData.weeklySpending;
-    final dataToGraphMonthly = widget.fakeData.monthlySpending;
-    final dataToGraphYearly = widget.fakeData.yearlySpending;
+    return FutureBuilder<Test>(
+      future: futureTest,
+      builder: (context, testSnapshot) {
+        if (testSnapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        } else if (testSnapshot.hasError) {
+          return Scaffold(
+            body: Center(child: Text('Backend connection failed: ${testSnapshot.error}')),
+          );
+        }
 
-    final mostExpensiveItem = widget.fakeData.mostExpensiveItem;
-    final favoriteItem = widget.fakeData.favoriteItems[0]; 
-    final previousFavoriteItems = widget.fakeData.favoriteItems
-        .skip(1)
-        .map((item) => '${item.date} ${item.name}: ${item.frequency} times ')
-        .join("\n");
-
-    return Scaffold(
-      appBar: AppBar(title: const Text("Kubera")),
-      body: Center(
-        child: FutureBuilder<Test>(
-          future: futureTest,
+        // Fetch dashboard data
+        return FutureBuilder<DashboardData?>(
+          future: dashboardData,
           builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return SingleChildScrollView(
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Scaffold(
+                body: Center(child: CircularProgressIndicator()),
+              );
+            } else if (snapshot.hasError) {
+              return Scaffold(
+                body: Center(child: Text('Error loading dashboard: ${snapshot.error}')),
+              );
+            } else if (!snapshot.hasData || snapshot.data == null) {
+              return const Scaffold(
+                body: Center(child: Text('No dashboard data available. Please login or scan a receipt to get started')),
+              );
+            }
+
+            final dashboard = snapshot.data!;
+            final dataToGraphWeekly = dashboard.weeklySpending;
+            final dataToGraphMonthly = dashboard.monthlySpending;
+            final dataToGraphYearly = dashboard.yearlySpending;
+
+            final mostExpensiveItem = dashboard.mostExpensiveItem;
+            final favoriteItem = dashboard.favoriteItems[0];
+            final previousFavoriteItems = dashboard.favoriteItems
+                .skip(1)
+                .map((item) => '${item.date} ${item.name}: ${item.frequency} times ')
+                .join("\n");
+
+            return Scaffold(
+              appBar: AppBar(title: const Text("Kubera")),
+              body: SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // line graph section
+                    // Line graph section
                     Padding(
                       padding: const EdgeInsets.fromLTRB(8, 0, 25.0, 0),
                       child: SizedBox(
@@ -97,34 +97,26 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                     ),
+
                     // average grocery run, spent each month, priciest item
                     Padding(
                       padding: const EdgeInsets.fromLTRB(20, 10, 8, 8),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          Text("Average Grocery Run", style: TextStyle(fontSize: 12)),
                           Text(
-                            "Average Grocery Run",
-                            style: TextStyle(fontSize: 12),
-                          ),
-                          Text(
-                            "\$${widget.fakeData.averageGroceryRunCost}",
+                            "\$${dashboard.averageGroceryRunCost}",
                             style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
                           ),
                           SizedBox(height: 8),
+                          Text("Average Spent Each Month", style: TextStyle(fontSize: 12)),
                           Text(
-                            "Average Spent Each Month",
-                            style: TextStyle(fontSize: 12),
-                          ),
-                          Text(
-                            "\$${widget.fakeData.monthlySpending.values.reduce((a, b) => a + b) / widget.fakeData.monthlySpending.length}",
+                            "\$${dashboard.monthlySpending.values.reduce((a, b) => a + b) / dashboard.monthlySpending.length}",
                             style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
                           ),
                           SizedBox(height: 8),
-                          Text(
-                            "Priciest Item This Month",
-                            style: TextStyle(fontSize: 12),
-                          ),
+                          Text("Priciest Item This Month", style: TextStyle(fontSize: 12)),
                           Text(
                             "${mostExpensiveItem.name} - \$${mostExpensiveItem.price}",
                             style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
@@ -132,24 +124,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         ],
                       ),
                     ),
-                    
+
                     // favorite item
                     Padding(
                       padding: const EdgeInsets.fromLTRB(20, 8, 8, 8),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            "Favorite Item This Month",
-                            style: TextStyle(fontSize: 12),
-                          ),
+                          Text("Favorite Item This Month", style: TextStyle(fontSize: 12)),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               Expanded(
                                 child: RichText(
                                   text: TextSpan(
-                                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold, color: Theme.of(context).textTheme.bodyLarge?.color,),
+                                    style: TextStyle(
+                                      fontSize: 25,
+                                      fontWeight: FontWeight.bold,
+                                      color: Theme.of(context).textTheme.bodyLarge?.color,
+                                    ),
                                     children: [
                                       TextSpan(
                                         text: "${favoriteItem.name} ",
@@ -164,11 +157,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 ),
                               ),
                               IconButton(
-                                icon: Icon(
-                                  _isExpanded
-                                      ? Icons.expand_less
-                                      : Icons.expand_more,
-                                ),
+                                icon: Icon(_isExpanded ? Icons.expand_less : Icons.expand_more),
                                 onPressed: () {
                                   setState(() {
                                     _isExpanded = !_isExpanded;
@@ -187,15 +176,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     ),
                   ],
                 ),
-              );
-            } else if (snapshot.hasError) {
-              return Text('${snapshot.error}');
-            }
-
-            return const CircularProgressIndicator();
+              ),
+            );
           },
-        ),
-      ),
+        );
+      },
     );
   }
 }
