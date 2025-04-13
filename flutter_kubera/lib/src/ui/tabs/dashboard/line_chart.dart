@@ -26,11 +26,11 @@ class LineChartWidget extends StatelessWidget {
       chartTitle = "Yearly Spending";
     } else if (isMonthly) {
       format = 'yyyy-MM';
-      labelFormat = 'MM-yy';
+      labelFormat = 'MM/yy';
       chartTitle = "Monthly Spending";
     } else  {
       format = 'yyyy-MM-dd';
-      labelFormat = 'MM-dd';
+      labelFormat = 'MM/dd';
       chartTitle = "Weekly Spending";
     }
 
@@ -97,7 +97,7 @@ class LineChartWidget extends StatelessWidget {
                         return SideTitleWidget(
                           meta: meta,
                           child: Transform.rotate(
-                            angle: -45 * 3.14 / 180,
+                            angle: 45 * 3.14 / 180,
                             child: Text(
                               DateFormat(labelFormat).format(date),
                               style: const TextStyle(fontSize: 10),

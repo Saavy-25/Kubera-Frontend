@@ -19,15 +19,17 @@ class DashboardData {
 
   factory DashboardData.fromJson(Map<String, dynamic> json) {
     return DashboardData(
-      userId: json['userId'],
+      userId: json['username'],
       weeklySpending: Map<String, double>.from(json['weeklySpending']),
       monthlySpending: Map<String, double>.from(json['monthlySpending']),
       yearlySpending: Map<String, double>.from(json['yearlySpending']),
       averageGroceryRunCost: (json['averageGroceryRunCost'] as num).toDouble(),
-      mostExpensiveItem: MostExpensiveItem.fromJson(json['mostExpensiveItem']),
-      favoriteItems: (json['favoriteItems'] as List<dynamic>)
-          .map((item) => FavoriteItem.fromJson(item))
-          .toList(),
+      mostExpensiveItem: json['mostExpensiveItem'] != null
+        ? MostExpensiveItem.fromJson(json['mostExpensiveItem'])
+        : MostExpensiveItem(name: '', price: 0.0, date: ''),
+      favoriteItems: (json['favoriteItems'] as List<dynamic>?)
+        ?.map((item) => FavoriteItem.fromJson(item))
+        .toList() ?? []
     );
   }
 }
@@ -45,9 +47,9 @@ class MostExpensiveItem {
 
   factory MostExpensiveItem.fromJson(Map<String, dynamic> json) {
     return MostExpensiveItem(
-      name: json['name'],
-      price: (json['price'] as num).toDouble(),
-      date: json['date'],
+      name: json['name'] ?? '',
+      price: (json['price'] as num?)?.toDouble() ?? 0.0,
+      date: json['date'] ?? '',
     );
   }
 }
@@ -65,9 +67,9 @@ class FavoriteItem {
 
   factory FavoriteItem.fromJson(Map<String, dynamic> json) {
     return FavoriteItem(
-      date: json['date'],
-      name: json['name'],
-      frequency: json['frequency'],
+      date: json['date'] ?? '',
+      name: json['name'] ?? '',
+      frequency: json['frequency'] ?? 0,
     );
   }
 }
