@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_kubera/src/ui/tabs/settings/auth_provider.dart';
 import 'package:flutter_kubera/src/ui/tabs/settings/authentication/account_profile.dart';
+import 'package:provider/provider.dart';
 import '../../../models/dashboard.dart';
 import '../../../models/test.dart';
 import '../../../services/flask_service.dart';
@@ -132,23 +134,30 @@ class _DashboardScreenState extends State<DashboardScreen> {
               return Scaffold(
                   body: Center(child: Text('Error loading dashboard: ${snapshot.error}')));
             } else if (!snapshot.hasData) {
+              final isAuthenticated = context.watch<AuthState>().isAuthorized;
               return Scaffold(
                 appBar: AppBar(title: const Text("Kubera")),
                 body: Center(
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24.0), // Add horizontal padding
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
                     child: Column(
-                      mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        ProfileScreen(),
-                        SizedBox(height: 16),
-                        Text(
-                          'Sign in to view your spending analytics',
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-                          textAlign: TextAlign.center,
-                        ),
+                        if (!isAuthenticated) ...[
+                          const ProfileScreen(),
+                          const SizedBox(height: 16),
+                          const Text(
+                            'Sign in to view your spending analytics',
+                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                            textAlign: TextAlign.center,
+                          ),
+                        ] else ...[
+                          const Text(
+                            'Scan a receipt to view analytics',
+                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
                       ],
                     ),
                   ),
