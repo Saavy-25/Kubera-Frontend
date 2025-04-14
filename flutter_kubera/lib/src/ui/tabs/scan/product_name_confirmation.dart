@@ -123,7 +123,7 @@ class _ProductNameConfirmationScreenState extends State<ProductNameConfirmationS
                           if (_isEditingDate)
                             TextField(
                               controller: _dateController,
-                              decoration: const InputDecoration(labelText: 'Date'),
+                              decoration: const InputDecoration(labelText: 'Date', hintText: 'YYYY-MM-DD'),
                               onChanged: (value) {
                                 setState(() {
                                   widget.scannedReceipt.date = value;
