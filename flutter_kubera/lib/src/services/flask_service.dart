@@ -19,7 +19,7 @@ class FlaskService {
   // static const String baseUrl = 'http://10.136.26.249:8000/flutter';
 
   // when running on emulator use the following
-  static const String baseUrl = 'http://localhost:5000/flutter';
+  static const String baseUrl = 'http://localhost:8000/flutter';
 
   Future<Test> fetchTest() async {
     final response = await http.get(Uri.parse('$baseUrl/get_data'));
