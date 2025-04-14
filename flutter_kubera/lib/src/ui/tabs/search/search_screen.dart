@@ -14,12 +14,12 @@ class SearchScreenState extends State<SearchScreen> {
   final FlaskService flaskService = FlaskService();
   List<GenericItem> searchResults = [];
   bool isLoading = false;
+  bool hasSearched = false; // Track whether a search has been performed
   TextEditingController searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    // Add a listener to update the UI when text changes
     searchController.addListener(() {
       setState(() {}); // Trigger a rebuild to show/hide the suffix icon
     });
@@ -27,18 +27,23 @@ class SearchScreenState extends State<SearchScreen> {
 
   @override
   void dispose() {
-    // Dispose of the controller when the widget is removed
     searchController.dispose();
     super.dispose();
   }
 
   void fetchSearchResults(String query) async {
     if (query.isEmpty) {
-      setState(() => searchResults = []);
+      setState(() {
+        searchResults = [];
+        hasSearched = false; // Reset search state if query is empty
+      });
       return;
     }
 
-    setState(() => isLoading = true);
+    setState(() {
+      isLoading = true;
+      hasSearched = true; // Mark that a search has been performed
+    });
 
     try {
       List<GenericItem> results = await flaskService.searchItems(query);
@@ -50,11 +55,42 @@ class SearchScreenState extends State<SearchScreen> {
     setState(() => isLoading = false);
   }
 
-  void _navigateToProductsPage(BuildContext context, String itemId, String itemName, String genericId) {
+  Widget buildHighlightedText(GenericItem item) {
+    if (item.highlightTexts != null && item.highlightTexts!.isNotEmpty) {
+      final highlightTexts = item.highlightTexts as List<dynamic>;
+      return RichText(
+        text: TextSpan(
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 16.0,
+          ),
+          children: highlightTexts.map((text) {
+            final value = text['value'] ?? '';
+            final type = text['type'] ?? '';
+            return TextSpan(
+              text: value,
+              style: TextStyle(
+                fontWeight: type == 'hit' ? FontWeight.bold : FontWeight.normal,
+              ),
+            );
+          }).toList(),
+        ),
+      );
+    } else {
+      return Text(item.genericName ?? "Unknown Item", 
+        style: const TextStyle(
+          fontSize: 16.0,
+          color: Color.fromARGB(255, 100, 100, 100),
+        ),
+      );
+    }
+  }
+
+  void _navigateToProductsPage(BuildContext context, String itemName, String genericId) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ProductsScreen(itemId: itemId, itemName: itemName, genericId: genericId),
+        builder: (context) => ProductsScreen(itemName: itemName, genericId: genericId),
       ),
     );
   }
@@ -78,7 +114,10 @@ class SearchScreenState extends State<SearchScreen> {
                         icon: const Icon(Icons.clear),
                         onPressed: () {
                           searchController.clear();
-                          setState(() => searchResults = []); // Clear results
+                          setState(() {
+                            searchResults = [];
+                            hasSearched = false; // Reset search state
+                          });
                         },
                       )
                     : null,
@@ -92,22 +131,33 @@ class SearchScreenState extends State<SearchScreen> {
             const SizedBox(height: 10),
             isLoading
                 ? const CircularProgressIndicator()
-                : searchResults.isNotEmpty
-                    ? Expanded(
-                        child: ListView.builder(
-                          itemCount: searchResults.length,
-                          itemBuilder: (context, index) {
-                            final item = searchResults[index];
-                            return ListTile(
-                              title: Text(item.genericName ?? "Unknown Item"),
-                              onTap: () => _navigateToProductsPage(context, item.id ?? "", item.genericName ?? "", item.id ?? ''),
-                              minTileHeight: 1,
-                            );
-                          },
-                        ),
-                      )
+                : hasSearched
+                    ? searchResults.isNotEmpty
+                        ? Expanded(
+                            child: ListView.builder(
+                              itemCount: searchResults.length,
+                              itemBuilder: (context, index) {
+                                final genericResult = searchResults[index];
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 10.0), // Reduced vertical padding
+                                  child: ListTile(
+                                    visualDensity: VisualDensity(),
+                                    title: buildHighlightedText(genericResult),
+                                    onTap: () => _navigateToProductsPage(
+                                      context,
+                                      genericResult.genericName ?? "",
+                                      genericResult.id ?? '',
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          )
+                        : const Expanded(
+                            child: Center(child: Text("No results found")),
+                          )
                     : const Expanded(
-                        child: Center(child: Text("No results found")),
+                        child: Center(child: Text("Search for a general item (e.g. Beef)")),
                       ),
           ],
         ),

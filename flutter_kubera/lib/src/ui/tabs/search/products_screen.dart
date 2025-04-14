@@ -5,13 +5,11 @@ import '../../../core/card.dart';
 import 'package:flutter_kubera/src/services/flask_service.dart';
 
 class ProductsScreen extends StatefulWidget {
-  final String itemId;
   final String itemName;
   final String genericId;
 
   const ProductsScreen({
     super.key,
-    required this.itemId,
     required this.itemName,
     required this.genericId,
   });
