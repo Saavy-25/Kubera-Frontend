@@ -80,9 +80,9 @@ class StoreProductCardState extends State<StoreProductCard> {
                         onChanged: (value) => widget.onPriceChanged(double.tryParse(value) ?? 0.0),
                       ),
                     ] else ...[
-                      Text('Line Item: ${widget.scannedLineItem.lineItem}'),
-                      Text('Product Name: ${widget.scannedLineItem.storeProductName}'),
-                      Text('Price: \$${widget.scannedLineItem.totalPrice}'),
+                      Text('${widget.scannedLineItem.lineItem}'),
+                      Text('${widget.scannedLineItem.storeProductName}'),
+                      Text('\$${widget.scannedLineItem.totalPrice}'),
                     ],
                   ],
                 ),
