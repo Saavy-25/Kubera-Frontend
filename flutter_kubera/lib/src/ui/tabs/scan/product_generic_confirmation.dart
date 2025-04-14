@@ -40,7 +40,7 @@ class _ProductGenericConfirmationScreenState extends State<ProductGenericConfirm
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Confirm The Generic Matches',
+              'Confirm matches',
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),

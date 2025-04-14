@@ -1,49 +1,164 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_kubera/src/models/shopping_list.dart';
+import 'package:flutter_kubera/src/services/flask_service.dart';
+import 'package:flutter_kubera/src/ui/tabs/settings/auth_provider.dart';
+import 'package:flutter_kubera/src/ui/tabs/shopping_list/shopping_list_details.dart';
+import 'package:flutter_kubera/src/ui/tabs/shopping_list/create_shopping_list_dialog.dart';
+import 'package:provider/provider.dart';
 
-import '../../../core/card.dart';
+class ShoppingListScreen extends StatefulWidget {
+  const ShoppingListScreen({Key? key}) : super(key: key);
 
-class ShoppingListScreen extends StatelessWidget {
-  final List<Map<String, dynamic>> items = [
-    {'id': 1, 'price': '2.98', 'product': 'Fresh Cherry Tomatoes', 'store': 'Walmart'},
-    {'id': 2, 'price': '3.54', 'product': 'Teeny Tiny Tomatoes', 'store': 'Trader Joe'},
-    {'id': 3, 'price': '2.95', 'product': 'Cherry Tomatoes Organic', 'store': 'Publix'},
-  ];
+  @override
+  _ShoppingListScreenState createState() => _ShoppingListScreenState();
+}
 
-  ShoppingListScreen({super.key});
+class _ShoppingListScreenState extends State<ShoppingListScreen> {
+  late Future<List<ShoppingList>> _shoppingListsFuture;
+  late bool userLoggedIn;
 
-  void _handleAddItem(String title) {
-    //TODO: Implement adding item to list
-    print('$title added to the shopping list!');
+  @override
+  void initState() {
+    super.initState();
+    if (context.read<AuthState>().isAuthorized) {
+      _shoppingListsFuture = FlaskService().getUsersShoppingLists(context);
+    }
+    userLoggedIn = context.read<AuthState>().isAuthorized;
+  }
+
+  Future<void> _refreshShoppingLists() async {
+    setState(() {
+      _shoppingListsFuture = FlaskService().getUsersShoppingLists(context);
+    });
+  }
+
+  Future<void> _showCreateShoppingListDialog() async {
+    final createdListName = await showDialog<String>(
+      context: context,
+      builder: (context) => const CreateShoppingListDialog(),
+    );
+
+    if (createdListName != null) {
+      // Refresh the shopping lists after creating a new one
+      _refreshShoppingLists();
+    }
+  }
+
+  Future<void> _deleteShoppingList(String id) async {
+    final flaskService = FlaskService();
+    try {
+      await flaskService.deleteShoppingList(id, context);
+      _refreshShoppingLists();
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $error')),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Kubera')),
-      body: ListView.builder(
-        itemCount: items.length,
-        itemBuilder: (context, index) {
-          final item = items[index];
-          return Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: CustomCard(
-              title: item['price'] ?? 'Unknown Item',
-              overhead: item['store'],
-              subtitle: item['product'],
-              showAddButton: true,
-              onAdd: () => _handleAddItem(item['price']),
-              onTap: () {
-                /*Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ShoppingListDetailsScreen(itemId: item['id']),
+      appBar: AppBar(
+        title: const Text('Shopping Lists'),
+      ),
+      body: Column(
+        children: userLoggedIn
+            ? [
+          Expanded(
+            child: FutureBuilder<List<ShoppingList>>(
+              future: _shoppingListsFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+            return Center(
+              child: Text('Error: ${snapshot.error}'),
+            );
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(
+              child: Text('No shopping lists found.'),
+            );
+                } else {
+            final shoppingLists = snapshot.data!;
+            return ListView.builder(
+              padding: const EdgeInsets.all(16.0),
+              itemCount: shoppingLists.length,
+              itemBuilder: (context, index) {
+                final shoppingList = shoppingLists[index];
+                return Dismissible(
+                  key: Key(shoppingList.id),
+                  direction: DismissDirection.endToStart,
+                  background: Container(
+              color: Colors.red,
+              alignment: Alignment.centerRight,
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: const Icon(Icons.delete, color: Colors.white),
+                  ),
+                  onDismissed: (direction) {
+              _deleteShoppingList(shoppingList.id);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('${shoppingList.listName} deleted')),
+              );
+                  },
+                  child: Card(
+              margin: const EdgeInsets.only(bottom: 16.0),
+              elevation: 3,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: ListTile(
+                title: Text(
+                  shoppingList.listName,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                onTap: () {
+                  // Navigate to the detailed view of the shopping list
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                builder: (context) =>
+                    ShoppingListDetails(shoppingList: shoppingList),
+                    ),
+                  ).then((_) => _refreshShoppingLists());
+                },
+              ),
                   ),
                 );
-                */
+              },
+            );
+                }
               },
             ),
-          );
-        },
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                const Text('Add List'),
+                IconButton(
+            onPressed: _showCreateShoppingListDialog,
+            icon: const Icon(Icons.add_task),
+                ),
+              ],
+            ),
+          ),
+              ]
+            : [
+            const Center(
+              child: Center(
+                child: Text(
+                'Log in to access shopping lists',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+          ],
       ),
     );
   }

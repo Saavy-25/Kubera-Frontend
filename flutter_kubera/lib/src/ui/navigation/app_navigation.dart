@@ -16,7 +16,7 @@ class AppNavigation extends StatefulWidget {
 }
 
 class _AppNavigationState extends State<AppNavigation> {
-  int _selectedIndex = 0;
+  int currentPageIndex = 0;
 
   static List<Widget> _widgetOptions(SettingsController settingsController) => [
         DashboardScreen(),
@@ -26,30 +26,47 @@ class _AppNavigationState extends State<AppNavigation> {
         SettingsScreen(settingsController: settingsController),
       ];
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
+  // void _onItemTapped(int index) {
+  //   setState(() {
+  //     _selectedIndex = index;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: _widgetOptions(widget.settingsController)[_selectedIndex],
+        child: _widgetOptions(widget.settingsController)[currentPageIndex],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.dashboard), label: 'Dashboard'),
-          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
-          BottomNavigationBarItem(icon: Icon(Icons.camera_alt), label: 'Scan'),
-          BottomNavigationBarItem(icon: Icon(Icons.list), label: 'Lists'),
-          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
+      
+      bottomNavigationBar: NavigationBar(
+        indicatorColor: const Color.fromARGB(255, 222, 255, 223),
+        onDestinationSelected: (int index) {
+          setState(() {
+            currentPageIndex = index;
+          });
+        },
+        selectedIndex: currentPageIndex,
+        destinations: const [
+          NavigationDestination(icon: Icon(Icons.dashboard), label: 'Dashboard'),
+          NavigationDestination(icon: Icon(Icons.search), label: 'Search'),
+          NavigationDestination(icon: Icon(Icons.camera_alt), label: 'Scan'),
+          NavigationDestination(icon: Icon(Icons.list), label: 'Lists'),
+          NavigationDestination(icon: Icon(Icons.person), label: 'Account'),
         ],
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
       ),
+      // bottomNavigationBar: BottomNavigationBar(
+      //   type: BottomNavigationBarType.fixed,
+      //   items: const [
+      //     BottomNavigationBarItem(icon: Icon(Icons.dashboard), label: 'Dashboard'),
+      //     BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
+      //     BottomNavigationBarItem(icon: Icon(Icons.camera_alt), label: 'Scan'),
+      //     BottomNavigationBarItem(icon: Icon(Icons.list), label: 'Lists'),
+      //     BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Account'),
+      //   ],
+      //   currentIndex: _selectedIndex,
+      //   onTap: _onItemTapped,
+      // ),
     );
   }
 }

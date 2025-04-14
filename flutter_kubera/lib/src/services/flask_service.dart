@@ -4,6 +4,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_kubera/src/models/dashboard.dart';
 import 'package:flutter_kubera/src/models/scanned_receipt.dart';
+import 'package:flutter_kubera/src/models/scanned_line_item.dart';
+import 'package:flutter_kubera/src/models/shopping_list.dart';
 import 'package:flutter_kubera/src/models/store_product.dart';
 import 'package:flutter_kubera/src/models/user.dart';
 import 'package:flutter_kubera/src/ui/tabs/settings/auth_provider.dart';
@@ -163,6 +165,115 @@ class FlaskService {
     throw Exception("Failed to load dashboard data: ${response.statusCode}");
   }
 }
+
+  // This api will add a store product to a user's shopping list
+  Future<void> addItemToList(String listId, String productId, String productName) async {
+    var body = {
+      'listId': listId,
+      'storeProductId': productId,
+      'productName': productName,
+    };
+
+    final response = await http.put(
+      Uri.parse('$baseUrl/add_item_to_list'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(body),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to add product to shopping list');
+    }
+  }
+
+  Future<void> removeItemFromList(String listId, String productId) async {
+    var body = {
+      'listId': listId,
+      'storeProductId': productId,
+    };
+
+    final response = await http.put(
+      Uri.parse('$baseUrl/remove_item_from_list'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(body),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to remove product from shopping list');
+    }
+  }
+
+  Future<void> toggleListItem(String listId, String productId) async {
+    var body = {
+      'listId': listId,
+      'storeProductId': productId,
+    };
+
+    final response = await http.put(
+      Uri.parse('$baseUrl/toggle_list_item'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(body),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to toggle list item');
+    }
+  }
+
+  Future<ShoppingList> getShoppingList(String listId) async {
+    final response = await http.get(Uri.parse('$baseUrl/get_list_data/$listId'));
+
+    if (response.statusCode == 200) {
+      final jsonResponse = jsonDecode(response.body);
+      return ShoppingList.fromJson(jsonResponse);
+    } else {
+      throw Exception('Failed to fetch shopping list');
+    }
+  }
+
+  // This api will fetch the user's shopping list list of shopping list ID's and names
+  Future<List<ShoppingList>> getUsersShoppingLists(BuildContext context) async {
+    Map<String, String> headers = userCookieHeader(context);
+    headers['Content-Type'] = 'application/json';
+    final response = await http.get( 
+      Uri.parse('$baseUrl/get_user_lists'), 
+      headers: headers
+    );
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(response.body);
+      return List<ShoppingList>.from(data.map((item) => ShoppingList.fromJson(item)));
+    } else {
+      throw Exception('Failed to get users shopping lists');
+    }
+  }
+
+  Future<void> createShoppingList(String listName, BuildContext context) async {
+    Map<String, String> headers = userCookieHeader(context);
+    headers['Content-Type'] = 'application/json';
+    final response = await http.post(
+      Uri.parse('$baseUrl/create_list'),
+      headers: headers,
+      body: jsonEncode({'listName': listName}),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to create shopping list');
+    }
+  }
+
+  Future<void> deleteShoppingList(String listId, BuildContext context) async {
+    Map<String, String> headers = userCookieHeader(context);
+    headers['Content-Type'] = 'application/json';
+    final response = await http.delete(
+      Uri.parse('$baseUrl/delete_list'),
+      headers: headers,
+      body: jsonEncode({'listId': listId}),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to delete shopping list');
+    }
+  }
 
   // This api will post the receipt to mongo after full confirmation (product name and generic name)
   Future<String> signup(String username, String password) async {

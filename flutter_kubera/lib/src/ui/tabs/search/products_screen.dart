@@ -89,7 +89,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
                       onTap: () {
                         navigateToItemPage(context, product);
                       },
-                      showAddButton: true,
+                      showAddToShoppingListButton: true,
+                      storeProduct: product,
                     ),
                   );
                 }).toList(),

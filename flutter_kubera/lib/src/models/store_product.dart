@@ -63,7 +63,7 @@ class StoreProduct {
     }).whereType<RecentPrice>().toList(); // Filter out null values
 
     return StoreProduct(
-      id: json['_id'] ?? '',
+      id: json['id'] ?? '',
       recentPrices: recentPrices,
       storeName: json['storeName']?.toString().toUpperCase() ?? '',
       storeProductName: json['storeProductName'] ?? '',

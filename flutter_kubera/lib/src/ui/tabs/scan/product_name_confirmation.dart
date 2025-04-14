@@ -87,7 +87,7 @@ class _ProductNameConfirmationScreenState extends State<ProductNameConfirmationS
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Confirm The Product Names',
+              'Does this look correct?',
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -118,7 +118,7 @@ class _ProductNameConfirmationScreenState extends State<ProductNameConfirmationS
                               },
                             )
                           else
-                            Text('Store Name: ${widget.scannedReceipt.storeName}'),
+                            Text('${widget.scannedReceipt.storeName}'),
                           const SizedBox(height: 8),
                           if (_isEditingDate)
                             TextField(
@@ -131,7 +131,7 @@ class _ProductNameConfirmationScreenState extends State<ProductNameConfirmationS
                               },
                             )
                           else
-                            Text('Date: ${widget.scannedReceipt.date}'),
+                            Text('${widget.scannedReceipt.date}'),
                         ],
                       ),
                     ),
