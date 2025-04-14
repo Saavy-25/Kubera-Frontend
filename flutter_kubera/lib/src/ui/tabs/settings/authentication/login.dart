@@ -87,7 +87,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   borderSide: BorderSide.none,
                 ),
                 filled: true,
-              )
+              ),
+              obscureText: true,
             ),
             ElevatedButton(
                 onPressed: () {
