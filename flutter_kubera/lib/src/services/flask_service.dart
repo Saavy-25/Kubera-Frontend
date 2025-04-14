@@ -2,6 +2,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_kubera/src/models/dashboard.dart';
 import 'package:flutter_kubera/src/models/scanned_receipt.dart';
 import 'package:flutter_kubera/src/models/scanned_line_item.dart';
 import 'package:flutter_kubera/src/models/shopping_list.dart';
@@ -145,6 +146,25 @@ class FlaskService {
       throw Exception('Failed to fetch product');
     }
   }
+  
+  Future<DashboardData?> fetchDashboardData(BuildContext context) async {
+    final response = await http.get(Uri.parse(
+      '$baseUrl/get_dashboard_data'), 
+      headers: userCookieHeader(context),
+    );
+
+  if (response.statusCode == 200) {
+    final jsonBody = jsonDecode(response.body);
+    if (jsonBody is Map<String, dynamic> && jsonBody.containsKey('message')) { // No receipts scanned
+      return null;
+    }
+    return DashboardData.fromJson(jsonBody);
+  } else if (response.statusCode == 401) {  // User is not authenticated
+    return null;
+  } else {
+    throw Exception("Failed to load dashboard data: ${response.statusCode}");
+  }
+}
 
   // This api will add a store product to a user's shopping list
   Future<void> addItemToList(String listId, String productId, String productName) async {

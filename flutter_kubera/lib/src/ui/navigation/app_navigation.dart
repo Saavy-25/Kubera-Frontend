@@ -19,7 +19,7 @@ class _AppNavigationState extends State<AppNavigation> {
   int currentPageIndex = 0;
 
   static List<Widget> _widgetOptions(SettingsController settingsController) => [
-        const DashboardScreen(),
+        DashboardScreen(),
         SearchScreen(),
         const ScanScreen(),
         ShoppingListScreen(),

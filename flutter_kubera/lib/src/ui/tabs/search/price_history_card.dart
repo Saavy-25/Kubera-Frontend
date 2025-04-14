@@ -51,7 +51,7 @@ class PriceHistoryCard extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              'Reported on ${price.reportCount} receipts',
+                              'Reported on ${price.reportCount} receipt(s)',
                               style: const TextStyle(
                                 fontSize: 14,
                                 color: Colors.black54,
