@@ -116,6 +116,7 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
                                   builder: (context) =>
                                       ShoppingListDetails(shoppingList: shoppingList),
                                 ),
+                                ).then((_) => _refreshShoppingLists()
                               );
                             },
                           ),
