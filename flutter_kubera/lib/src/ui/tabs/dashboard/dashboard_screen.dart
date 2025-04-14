@@ -91,14 +91,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         ),
                       ),
               ),
-              IconButton(
-                icon: Icon(_isExpanded ? Icons.expand_less : Icons.expand_more),
-                onPressed: () {
-                  setState(() {
-                    _isExpanded = !_isExpanded;
-                  });
-                },
-              ),
+              if(!isEmpty)  IconButton(
+                  icon: Icon(_isExpanded ? Icons.expand_less : Icons.expand_more),
+                  onPressed: () {
+                    setState(() {
+                      _isExpanded = !_isExpanded;
+                    });
+                  },
+                ),
             ],
           ),
           if (_isExpanded && !isEmpty)
