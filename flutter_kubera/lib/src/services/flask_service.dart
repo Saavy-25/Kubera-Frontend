@@ -212,25 +212,6 @@ class FlaskService {
 
   // This api will fetch the user's shopping list list of shopping list ID's and names
   Future<List<ShoppingList>> getUsersShoppingLists(BuildContext context) async {
-    // return [
-    //   ShoppingList(
-    //     id: '1',
-    //     listName: 'Test List',
-    //     items: [
-    //       ListItem(productName: 'Test Product', storeProductId: '123'),
-    //     ],
-    //     date: '2023-10-01',
-    //   ),
-    //   ShoppingList(
-    //     id: '2',
-    //     listName: 'Another List',
-    //     items: [
-    //       ListItem(productName: 'Another Product', storeProductId: '456'),
-    //     ],
-    //     date: '2023-10-02',
-    //   ),
-    // ];
-
     Map<String, String> headers = userCookieHeader(context);
     headers['Content-Type'] = 'application/json';
     final response = await http.get( 
