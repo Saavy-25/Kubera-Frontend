@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_kubera/src/services/flask_service.dart';
 import '../../../models/shopping_list.dart';
 
-class ShoppingListDetails extends StatelessWidget {
+class ShoppingListDetails extends StatefulWidget {
   final ShoppingList shoppingList;
 
   const ShoppingListDetails({
@@ -10,17 +11,71 @@ class ShoppingListDetails extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  _ShoppingListDetailsState createState() => _ShoppingListDetailsState();
+}
+
+class _ShoppingListDetailsState extends State<ShoppingListDetails> {
+  late ShoppingList _shoppingList;
+
+  @override
+  void initState() {
+    super.initState();
+    _shoppingList = widget.shoppingList;
+  }
+
+  Future<void> _refreshShoppingList() async {
+    try {
+      final updatedList = await FlaskService().getShoppingList(_shoppingList.id);
+      setState(() {
+        _shoppingList = updatedList;
+      });
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error refreshing list: $error')),
+      );
+    }
+  }
+
+  Future<void> _removeItemFromList(BuildContext context, String listId, String productId) async {
+    try {
+      await FlaskService().removeItemFromList(listId, productId);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Product removed from the list')),
+      );
+      _refreshShoppingList();
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $error')),
+      );
+    }
+  }
+
+  Future<void> _toggleListItem(BuildContext context, String listId, String productId) async {
+    try {
+      await FlaskService().toggleListItem(listId, productId);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Product toggled')),
+      );
+      _refreshShoppingList();
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $error')),
+      );
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(shoppingList.listName),
+        title: Text(_shoppingList.listName),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: ListView.builder(
-          itemCount: shoppingList.items.length,
+          itemCount: _shoppingList.items.length,
           itemBuilder: (context, index) {
-            final item = shoppingList.items[index];
+            final item = _shoppingList.items[index];
             return Card(
               margin: const EdgeInsets.only(bottom: 16.0),
               elevation: 3,
@@ -35,11 +90,17 @@ class ShoppingListDetails extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                subtitle: Text('Product ID: ${item.storeProductId}'),
-                trailing: Checkbox(
-                  value: item.isChecked,
+                // subtitle: Text('${item.storeName} - ${item.price}'), TODO: query product to get price
+                leading: Checkbox(
+                  value: item.retrieved,
                   onChanged: (bool? value) {
-                    // Handle checkbox toggle (if needed)
+                    _toggleListItem(context, _shoppingList.id, item.storeProductId);
+                  },
+                ),
+                trailing: IconButton(
+                  icon: const Icon(Icons.remove, color: Colors.black),
+                  onPressed: () {
+                    _removeItemFromList(context, _shoppingList.id, item.storeProductId);
                   },
                 ),
               ),

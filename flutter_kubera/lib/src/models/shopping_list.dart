@@ -1,19 +1,19 @@
 class ListItem {
   String productName;
   String storeProductId;
-  bool isChecked;
+  bool retrieved;
 
   ListItem({
     required this.productName,
     required this.storeProductId,
-    this.isChecked = false,
+    this.retrieved = false,
   });
 
   factory ListItem.fromJson(Map<String, dynamic> json) {
     return ListItem(
       productName: json['productName'] ?? '',
       storeProductId: json['storeProductId'] ?? '',
-      isChecked: json['isChecked'] ?? false,
+      retrieved: json['retrieved'] ?? false,
     );
   }
 
@@ -21,12 +21,12 @@ class ListItem {
     return {
       'productName': productName,
       'storeProductId': storeProductId,
-      'isChecked': isChecked,
+      'retrieved': retrieved,
     };
   }
 
   void toggleChecked() {
-    isChecked = !isChecked;
+    retrieved = !retrieved;
   }
 }
 
@@ -46,12 +46,9 @@ class ShoppingList {
   factory ShoppingList.fromJson(Map<String, dynamic> json) {
     var itemsFromJson = json['items'] as List? ?? [];
     List<ListItem> items = itemsFromJson.map((item) => ListItem.fromJson(item)).toList();
-    if (items.isEmpty) {
-      items = [ListItem(productName: '', storeProductId: '')];
-    }
 
     return ShoppingList(
-      id: json['_id'] ?? '',
+      id: json['id'] ?? '',
       listName: json['listName'] ?? '',
       items: items,
       date: json['date'] ?? '',
@@ -60,7 +57,7 @@ class ShoppingList {
 
   Map<String, dynamic> toJson() {
     return {
-      '_id': id,
+      'id': id,
       'listName': listName,
       'items': items.map((item) => item.toJson()).toList(),
       'date': date,

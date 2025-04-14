@@ -17,12 +17,12 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
   @override
   void initState() {
     super.initState();
-    _shoppingListsFuture = FlaskService().getUsersShoppingLists();
+    _shoppingListsFuture = FlaskService().getUsersShoppingLists(context);
   }
 
   Future<void> _refreshShoppingLists() async {
     setState(() {
-      _shoppingListsFuture = FlaskService().getUsersShoppingLists();
+      _shoppingListsFuture = FlaskService().getUsersShoppingLists(context);
     });
   }
 
@@ -38,6 +38,18 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
     }
   }
 
+  Future<void> _deleteShoppingList(String id) async {
+    final flaskService = FlaskService();
+    try {
+      await flaskService.deleteShoppingList(id, context);
+      _refreshShoppingLists();
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $error')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,19 +58,6 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
       ),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(1.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Text('Create New Shopping List'), // TODO: make clickable
-                IconButton(
-                  onPressed: _showCreateShoppingListDialog,
-                  icon: const Icon(Icons.add_task),
-                ),
-              ],
-            ),
-          ),
           Expanded(
             child: FutureBuilder<List<ShoppingList>>(
               future: _shoppingListsFuture,
@@ -80,36 +79,65 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
                     itemCount: shoppingLists.length,
                     itemBuilder: (context, index) {
                       final shoppingList = shoppingLists[index];
-                      return Card(
-                        margin: const EdgeInsets.only(bottom: 16.0),
-                        elevation: 3,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                      return Dismissible(
+                        key: Key(shoppingList.id),
+                        direction: DismissDirection.endToStart,
+                        background: Container(
+                          color: Colors.red,
+                          alignment: Alignment.centerRight,
+                          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                          child: const Icon(Icons.delete, color: Colors.white),
                         ),
-                        child: ListTile(
-                          title: Text(
-                            shoppingList.listName,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
+                        onDismissed: (direction) {
+                          _deleteShoppingList(shoppingList.id);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('${shoppingList.listName} deleted')),
+                          );
+                        },
+                        child: Card(
+                          margin: const EdgeInsets.only(bottom: 16.0),
+                          elevation: 3,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
                           ),
-                          onTap: () {
-                            // Navigate to the detailed view of the shopping list
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    ShoppingListDetails(shoppingList: shoppingList),
+                          child: ListTile(
+                            title: Text(
+                              shoppingList.listName,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
                               ),
-                            );
-                          },
+                            ),
+                            onTap: () {
+                              // Navigate to the detailed view of the shopping list
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      ShoppingListDetails(shoppingList: shoppingList),
+                                ),
+                              );
+                            },
+                          ),
                         ),
                       );
                     },
                   );
                 }
               },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                const Text('Add List'),
+                IconButton(
+                  onPressed: _showCreateShoppingListDialog,
+                  icon: const Icon(Icons.add_task),
+                ),
+              ],
             ),
           ),
         ],

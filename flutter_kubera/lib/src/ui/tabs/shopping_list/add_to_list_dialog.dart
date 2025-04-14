@@ -22,7 +22,7 @@ class _AddToListDialogState extends State<AddToListDialog> {
   @override
   void initState() {
     super.initState();
-    _shoppingListsFuture = FlaskService().getUsersShoppingLists();
+    _shoppingListsFuture = FlaskService().getUsersShoppingLists(context);
   }
 
   @override
@@ -89,7 +89,7 @@ class _AddToListDialogState extends State<AddToListDialog> {
                   onPressed: _selectedShoppingList != null
                       ? () {
                             FlaskService()
-                              .addItemToList(_selectedShoppingList!.id, widget.storeProduct.id, widget.storeProduct.storeProductName, context)
+                              .addItemToList(_selectedShoppingList!.id, widget.storeProduct.id, widget.storeProduct.storeProductName)
                               .then((_) {
                             Navigator.pop(context, _selectedShoppingList);
                             }).catchError((error) {

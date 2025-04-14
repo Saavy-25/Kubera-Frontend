@@ -19,7 +19,7 @@ class FlaskService {
   // static const String baseUrl = 'http://10.136.26.249:8000/flutter';
 
   // when running on emulator use the following
-  static const String baseUrl = 'http://localhost:8000/flutter';
+  static const String baseUrl = 'http://localhost:5000/flutter';
 
   Future<Test> fetchTest() async {
     final response = await http.get(Uri.parse('$baseUrl/get_data'));
@@ -154,9 +154,9 @@ class FlaskService {
       'productName': productName,
     };
 
-    final response = await http.post(
+    final response = await http.put(
       Uri.parse('$baseUrl/add_item_to_list'),
-      headers: {'Content-Type': 'application/json'}, // TODO: Add cookie headers
+      headers: {'Content-Type': 'application/json'},
       body: jsonEncode(body),
     );
 
@@ -165,12 +165,16 @@ class FlaskService {
     }
   }
 
-  // This api will delete a store product from a user's shopping list
-  Future<void> deleteFromShoppingList(String productId) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/remove_from_shopping_list'),
+  Future<void> removeItemFromList(String listId, String productId) async {
+    var body = {
+      'listId': listId,
+      'storeProductId': productId,
+    };
+
+    final response = await http.put(
+      Uri.parse('$baseUrl/remove_item_from_list'),
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'product_id': productId}),
+      body: jsonEncode(body),
     );
 
     if (response.statusCode != 200) {
@@ -178,63 +182,95 @@ class FlaskService {
     }
   }
 
+  Future<void> toggleListItem(String listId, String productId) async {
+    var body = {
+      'listId': listId,
+      'storeProductId': productId,
+    };
+
+    final response = await http.put(
+      Uri.parse('$baseUrl/toggle_list_item'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(body),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to toggle list item');
+    }
+  }
+
+  Future<ShoppingList> getShoppingList(String listId) async {
+    final response = await http.get(Uri.parse('$baseUrl/get_list_data/$listId'));
+
+    if (response.statusCode == 200) {
+      final jsonResponse = jsonDecode(response.body);
+      return ShoppingList.fromJson(jsonResponse);
+    } else {
+      throw Exception('Failed to fetch shopping list');
+    }
+  }
+
   // This api will fetch the user's shopping list list of shopping list ID's and names
-  Future<List<ShoppingList>> getUsersShoppingLists() async {
-    return [
-      ShoppingList(
-    id: '1',
-    listName: 'Groceries',
-    date: '2025-04-10',
-    items: [
-      ListItem(productName: 'Milk', storeProductId: '101', isChecked: false),
-      ListItem(productName: 'Bread', storeProductId: '102', isChecked: true),
-      ListItem(productName: 'Eggs', storeProductId: '103', isChecked: false),
-    ],
-  ),
-  ShoppingList(
-    id: '2',
-    listName: 'Strawberry Tart',
-    date: '2025-04-09',
-    items: [
-      ListItem(productName: 'Strawberry', storeProductId: '201', isChecked: false),
-      ListItem(productName: 'Flour', storeProductId: '202', isChecked: true),
-    ],
-  ),
-  ShoppingList(
-    id: '3',
-    listName: 'Curry',
-    date: '2025-04-08',
-    items: [
-      ListItem(productName: 'Chicken', storeProductId: '301', isChecked: true),
-      ListItem(productName: 'Potato', storeProductId: '302', isChecked: false),
-    ],
-  ),
-    ];
+  Future<List<ShoppingList>> getUsersShoppingLists(BuildContext context) async {
+    // return [
+    //   ShoppingList(
+    //     id: '1',
+    //     listName: 'Test List',
+    //     items: [
+    //       ListItem(productName: 'Test Product', storeProductId: '123'),
+    //     ],
+    //     date: '2023-10-01',
+    //   ),
+    //   ShoppingList(
+    //     id: '2',
+    //     listName: 'Another List',
+    //     items: [
+    //       ListItem(productName: 'Another Product', storeProductId: '456'),
+    //     ],
+    //     date: '2023-10-02',
+    //   ),
+    // ];
 
-    // final response = await http.get( 
-    //   Uri.parse('$baseUrl/get_user_lists'), 
-    //   headers: {
-    //   'Content-Type': 'application/json',
-    //   // TODO: Cookie headers
-    // });
+    Map<String, String> headers = userCookieHeader(context);
+    headers['Content-Type'] = 'application/json';
+    final response = await http.get( 
+      Uri.parse('$baseUrl/get_user_lists'), 
+      headers: headers
+    );
 
-    // if (response.statusCode == 200) {
-    //   final List<dynamic> data = jsonDecode(response.body);
-    //   return List<ShoppingList>.from(data.map((item) => ShoppingList.fromJson(item)));
-    // } else {
-    //   throw Exception('Failed to get users shopping lists');
-    // }
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(response.body);
+      return List<ShoppingList>.from(data.map((item) => ShoppingList.fromJson(item)));
+    } else {
+      throw Exception('Failed to get users shopping lists');
+    }
   }
 
   Future<void> createShoppingList(String listName, BuildContext context) async {
+    Map<String, String> headers = userCookieHeader(context);
+    headers['Content-Type'] = 'application/json';
     final response = await http.post(
       Uri.parse('$baseUrl/create_list'),
-      headers: userCookieHeader(context),
+      headers: headers,
       body: jsonEncode({'listName': listName}),
     );
 
     if (response.statusCode != 200) {
       throw Exception('Failed to create shopping list');
+    }
+  }
+
+  Future<void> deleteShoppingList(String listId, BuildContext context) async {
+    Map<String, String> headers = userCookieHeader(context);
+    headers['Content-Type'] = 'application/json';
+    final response = await http.delete(
+      Uri.parse('$baseUrl/delete_list'),
+      headers: headers,
+      body: jsonEncode({'listId': listId}),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to delete shopping list');
     }
   }
 
