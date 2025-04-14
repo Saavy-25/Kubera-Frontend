@@ -145,7 +145,11 @@ class _ScanScreenState extends State<ScanScreen> {
                           MaterialPageRoute(
                             builder: (context) => ProductNameConfirmationScreen(scannedReceipt: scannedReceipt),
                           ),
-                        );
+                        ).then((_) {
+                          setState(() {
+                            _image = null; // Reset the image after processing
+                          });
+                        });
                       } else {
                         _showErrorDialog('No image selected. Please select an image first.');
                       }
