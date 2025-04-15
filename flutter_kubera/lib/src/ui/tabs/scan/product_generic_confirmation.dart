@@ -72,12 +72,14 @@ class _ProductGenericConfirmationScreenState extends State<ProductGenericConfirm
                                 const SizedBox(height: 8),
                                 Row(
                                   children: [
-                                    const Icon(Icons.arrow_forward, size: 16),
-                                    const SizedBox(width: 4),
-                                    Text(
+                                  const Icon(Icons.arrow_forward, size: 16),
+                                  const SizedBox(width: 4),
+                                    Expanded(
+                                      child: Text(
                                       product.genericMatch,
                                       style: const TextStyle(fontSize: 16),
                                       overflow: TextOverflow.ellipsis,
+                                      ),
                                     ),
                                   ],
                                 ),
