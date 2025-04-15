@@ -67,6 +67,7 @@ class _ProductGenericConfirmationScreenState extends State<ProductGenericConfirm
                                 Text(
                                   product.storeProductName,
                                   style: const TextStyle(fontSize: 16),
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                                 const SizedBox(height: 8),
                                 Row(
@@ -76,6 +77,7 @@ class _ProductGenericConfirmationScreenState extends State<ProductGenericConfirm
                                     Text(
                                       product.genericMatch,
                                       style: const TextStyle(fontSize: 16),
+                                      overflow: TextOverflow.ellipsis,
                                     ),
                                   ],
                                 ),
