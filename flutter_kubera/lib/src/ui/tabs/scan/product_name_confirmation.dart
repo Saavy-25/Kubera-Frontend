@@ -76,7 +76,8 @@ class _ProductNameConfirmationScreenState extends State<ProductNameConfirmationS
       showDialog(
         context: context,
         builder: (BuildContext context) {
-          return ErrorDialog(message: 'Failed to post receipt: $e');
+          String userMessage = e.toString().replaceAll("Exception: ", "");
+          return ErrorDialog(message: userMessage);
         },
       );
     } finally {

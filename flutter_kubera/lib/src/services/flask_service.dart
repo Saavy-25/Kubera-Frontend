@@ -60,7 +60,7 @@ class FlaskService {
 
   // This api will call gpt to get generic matches to be verified by the user
   Future<ScannedReceipt> mapReceipt(ScannedReceipt receipt) async {
-    try {
+    
         final response = await http.post(
         Uri.parse('$baseUrl/map_receipt'),
         headers: {'Content-Type': 'application/json'},
@@ -71,15 +71,15 @@ class FlaskService {
         final jsonResponse = jsonDecode(response.body);
         final receiptJson = jsonResponse['receipt'];
         return ScannedReceipt.fromJson(receiptJson);
+      }else if (response.statusCode == 400) {
+        final jsonResponse = jsonDecode(response.body);
+        final errorMessage = jsonResponse['message'];
+        throw Exception(errorMessage);
       }
       else {
         throw Exception('Failed to map receipt: ${response.statusCode}');
       }
 
-    }
-    catch (e) {
-      throw Exception('Failed to map receipt: $e');
-    }
   }
 
   // This api will post the receipt to mongo after full confirmation (product name and generic name)
