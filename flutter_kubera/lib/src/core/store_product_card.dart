@@ -92,6 +92,7 @@ class StoreProductCardState extends State<StoreProductCard> {
                       ),
                       Text(
                         '\$${widget.scannedLineItem.totalPrice}',
+                        style: TextStyle(fontSize: 14, color: Colors.grey),
                           overflow: TextOverflow.ellipsis,
                       ),
                     ],
