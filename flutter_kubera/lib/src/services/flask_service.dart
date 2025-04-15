@@ -17,10 +17,12 @@ import 'package:provider/provider.dart';
 
 class FlaskService {
   // when running on physical device use the ip address of the machine running the server (i.e your laptop )
-  // static const String baseUrl = 'http://10.136.26.249:8000/flutter';
+  static const String baseUrl = 'http://10.138.12.33:8000/flutter';
+
+  // static const String baseUrl = 'https://kubera-avbyczbee5fybnht.eastus2-01.azurewebsites.net/flutter';
 
   // when running on emulator use the following
-  static const String baseUrl = 'http://localhost:8000/flutter';
+  // static const String baseUrl = 'http://localhost:8000/flutter';
 
   Future<Test> fetchTest() async {
     final response = await http.get(Uri.parse('$baseUrl/get_data'));
