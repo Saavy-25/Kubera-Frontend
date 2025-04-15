@@ -23,6 +23,7 @@ class _ProductNameConfirmationScreenState extends State<ProductNameConfirmationS
 
   bool _isEditingStoreName = false;
   bool _isEditingDate = false;
+  bool _isLoading = false; // Added _isLoading variable
 
   @override
   void initState() {
@@ -57,6 +58,10 @@ class _ProductNameConfirmationScreenState extends State<ProductNameConfirmationS
   }
 
   Future<void> _mapReceipt(BuildContext context, ScannedReceipt scannedReceipt) async {
+    setState(() {
+      _isLoading = true; // Set _isLoading to true
+    });
+
     try {
       ScannedReceipt mappedReceipt = await FlaskService().mapReceipt(scannedReceipt);
 
@@ -74,6 +79,10 @@ class _ProductNameConfirmationScreenState extends State<ProductNameConfirmationS
           return ErrorDialog(message: 'Failed to post receipt: $e');
         },
       );
+    } finally {
+      setState(() {
+        _isLoading = false; // Set _isLoading to false
+      });
     }
   }
 
@@ -81,157 +90,170 @@ class _ProductNameConfirmationScreenState extends State<ProductNameConfirmationS
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Kubera')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Does this look correct?',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-            ),
-
-            // Display receipt data
-            const SizedBox(height: 16),
-            Card(
-              elevation: 3,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          if (_isEditingStoreName)
-                            TextField(
-                              controller: _storeNameController,
-                              decoration: const InputDecoration(labelText: 'Store Name'),
-                              onChanged: (value) {
-                                setState(() {
-                                  widget.scannedReceipt.storeName = value;
-                                });
-                              },
-                            )
-                          else
-                            Text('${widget.scannedReceipt.storeName}'),
-                          const SizedBox(height: 8),
-                          if (_isEditingDate)
-                            TextField(
-                              controller: _dateController,
-                              decoration: const InputDecoration(labelText: 'Date', hintText: 'YYYY-MM-DD'),
-                              onChanged: (value) {
-                                setState(() {
-                                  widget.scannedReceipt.date = value;
-                                });
-                              },
-                            )
-                          else
-                            Text('${widget.scannedReceipt.date}'),
-                        ],
+      body: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Does this look correct?',
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
                       ),
-                    ),
-                    Column(
+                ),
+
+                // Display receipt data
+                const SizedBox(height: 16),
+                Card(
+                  elevation: 3,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        if (_isEditingStoreName || _isEditingDate)
-                          TextButton(
-                            onPressed: () {
-                              setState(() {
-                                _isEditingStoreName = false;
-                                _isEditingDate = false;
-                              });
-                            },
-                            child: const Text('Save'),
-                          )
-                        else
-                          TextButton(
-                            onPressed: () {
-                              setState(() {
-                                _isEditingStoreName = true;
-                                _isEditingDate = true;
-                              });
-                            },
-                            child: const Text('Edit'),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (_isEditingStoreName)
+                                TextField(
+                                  controller: _storeNameController,
+                                  decoration: const InputDecoration(labelText: 'Store Name'),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      widget.scannedReceipt.storeName = value;
+                                    });
+                                  },
+                                )
+                              else
+                                Text('${widget.scannedReceipt.storeName}'),
+                              const SizedBox(height: 8),
+                              if (_isEditingDate)
+                                TextField(
+                                  controller: _dateController,
+                                  decoration: const InputDecoration(labelText: 'Date', hintText: 'YYYY-MM-DD'),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      widget.scannedReceipt.date = value;
+                                    });
+                                  },
+                                )
+                              else
+                                Text('${widget.scannedReceipt.date}'),
+                            ],
                           ),
+                        ),
+                        Column(
+                          children: [
+                            if (_isEditingStoreName || _isEditingDate)
+                              TextButton(
+                                onPressed: () {
+                                  setState(() {
+                                    _isEditingStoreName = false;
+                                    _isEditingDate = false;
+                                  });
+                                },
+                                child: const Text('Save'),
+                              )
+                            else
+                              TextButton(
+                                onPressed: () {
+                                  setState(() {
+                                    _isEditingStoreName = true;
+                                    _isEditingDate = true;
+                                  });
+                                },
+                                child: const Text('Edit'),
+                              ),
+                          ],
+                        ),
                       ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Products:',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
+                const SizedBox(height: 16),
+                Text(
+                  'Products:',
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                ),
+                const SizedBox(height: 8),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: widget.scannedReceipt.scannedLineItems.length,
+                    itemBuilder: (context, index) {
+                      final product = widget.scannedReceipt.scannedLineItems[index];
+                      return StoreProductCard(
+                        scannedLineItem: product,
+                        onLineItemChanged: (value) {
+                          setState(() {
+                            product.updateLineItem(value);
+                          });
+                        },
+                        onProductNameChanged: (value) {
+                          setState(() {
+                            product.updateProductName(value);
+                          });
+                        },
+                        onPriceChanged: (value) {
+                          setState(() {
+                            product.updatePrice(value);
+                          });
+                        },
+                      );
+                    },
                   ),
-            ),
-            const SizedBox(height: 8),
-            Expanded(
-              child: ListView.builder(
-                itemCount: widget.scannedReceipt.scannedLineItems.length,
-                itemBuilder: (context, index) {
-                  final product = widget.scannedReceipt.scannedLineItems[index];
-                  return StoreProductCard(
-                    scannedLineItem: product,
-                    onLineItemChanged: (value) {
-                      setState(() {
-                        product.updateLineItem(value);
-                      });
-                    },
-                    onProductNameChanged: (value) {
-                      setState(() {
-                        product.updateProductName(value);
-                      });
-                    },
-                    onPriceChanged: (value) {
-                      setState(() {
-                        product.updatePrice(value);
-                      });
-                    },
-                  );
-                },
-              ),
-            ),
+                ),
 
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10.0),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: () { //Go to scan screen
-                        Navigator.pop(context);
-                      },
-                      label: const Text('Retry'),
-                      icon: const Icon(Icons.arrow_back),
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16.0),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          onPressed: () { //Go to scan screen
+                            Navigator.pop(context);
+                          },
+                          label: const Text('Retry'),
+                          icon: const Icon(Icons.arrow_back),
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 16.0),
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: () { //Go to scan screen
-                        _mapReceipt(context, widget.scannedReceipt);
-                      },
-                      label: const Text('Confirm'),
-                      icon: const Icon(Icons.check),
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16.0),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          onPressed: () { //Go to scan screen
+                            _mapReceipt(context, widget.scannedReceipt);
+                          },
+                          label: const Text('Confirm'),
+                          icon: const Icon(Icons.check),
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 16.0),
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
-                ],
+                ),
+              ],
+            ),
+          ),
+          if (_isLoading)
+            const Positioned(
+              bottom: 16.0,
+              left: 0,
+              right: 0,
+              child: Center(
+                child: CircularProgressIndicator(),
               ),
             ),
-          ],
-        ),
+        ],
       ),
     );
   }

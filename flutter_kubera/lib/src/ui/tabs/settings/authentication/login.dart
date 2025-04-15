@@ -63,7 +63,7 @@ class _LoginScreenState extends State<LoginScreen> {
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
-            const SizedBox(height: 16),
+            const SizedBox(height: 240),
             TextFormField(
               controller: _usernameController,
               //onSubmitted: fetchSearchResults,
@@ -87,7 +87,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   borderSide: BorderSide.none,
                 ),
                 filled: true,
-              )
+              ),
+              obscureText: true,
             ),
             ElevatedButton(
                 onPressed: () {
