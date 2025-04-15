@@ -62,7 +62,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
-            const SizedBox(height: 16),
+            const SizedBox(height: 200),
             TextFormField(
               controller: _usernameController,
               //onSubmitted: fetchSearchResults,
