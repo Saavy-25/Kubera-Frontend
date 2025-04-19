@@ -17,10 +17,12 @@ import 'package:provider/provider.dart';
 
 class FlaskService {
   // when running on physical device use the ip address of the machine running the server (i.e your laptop )
-  // static const String baseUrl = 'http://10.136.26.249:8000/flutter';
+  static const String baseUrl = 'http://10.138.12.33:8000/flutter';
+
+  // static const String baseUrl = 'https://kubera-avbyczbee5fybnht.eastus2-01.azurewebsites.net/flutter';
 
   // when running on emulator use the following
-  static const String baseUrl = 'http://localhost:8000/flutter';
+  // static const String baseUrl = 'http://localhost:8000/flutter';
 
   Future<Test> fetchTest() async {
     final response = await http.get(Uri.parse('$baseUrl/get_data'));
@@ -60,7 +62,7 @@ class FlaskService {
 
   // This api will call gpt to get generic matches to be verified by the user
   Future<ScannedReceipt> mapReceipt(ScannedReceipt receipt) async {
-    try {
+    
         final response = await http.post(
         Uri.parse('$baseUrl/map_receipt'),
         headers: {'Content-Type': 'application/json'},
@@ -71,15 +73,15 @@ class FlaskService {
         final jsonResponse = jsonDecode(response.body);
         final receiptJson = jsonResponse['receipt'];
         return ScannedReceipt.fromJson(receiptJson);
+      }else if (response.statusCode == 400) {
+        final jsonResponse = jsonDecode(response.body);
+        final errorMessage = jsonResponse['message'];
+        throw Exception(errorMessage);
       }
       else {
         throw Exception('Failed to map receipt: ${response.statusCode}');
       }
 
-    }
-    catch (e) {
-      throw Exception('Failed to map receipt: $e');
-    }
   }
 
   // This api will post the receipt to mongo after full confirmation (product name and generic name)

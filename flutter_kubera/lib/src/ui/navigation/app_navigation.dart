@@ -81,7 +81,7 @@ class _AppNavigationState extends State<AppNavigation> {
                 : _guestWidgetOptions(widget.settingsController)[currentPageIndex],
           ),
           bottomNavigationBar: NavigationBar(
-            indicatorColor: const Color.fromARGB(255, 222, 255, 223),
+            indicatorColor: const Color.fromARGB(255, 213, 183, 156),
             onDestinationSelected: (int index) {
               setState(() {
                 currentPageIndex = index;

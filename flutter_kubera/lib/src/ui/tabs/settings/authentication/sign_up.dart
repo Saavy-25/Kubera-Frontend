@@ -17,6 +17,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   late Future<Test> futureTest;
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _passwordConfirmController = TextEditingController();
 
   @override
   void initState() {
@@ -66,7 +67,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               controller: _usernameController,
               //onSubmitted: fetchSearchResults,
               decoration: InputDecoration(
-                hintText: "enter a new username",
+                hintText: "Enter a new username",
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8.0),
                   borderSide: BorderSide.none,
@@ -79,17 +80,36 @@ class _SignUpScreenState extends State<SignUpScreen> {
               controller: _passwordController,
               //onSubmitted: fetchSearchResults,
               decoration: InputDecoration(
-                hintText: "enter a new password",
+                hintText: "Enter a new password",
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8.0),
                   borderSide: BorderSide.none,
                 ),
                 filled: true,
-              )
+              ),
+              obscureText: true,
+            ),
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: _passwordConfirmController,
+              //onSubmitted: fetchSearchResults,
+              decoration: InputDecoration(
+                hintText: "Confirm your password",
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                  borderSide: BorderSide.none,
+                ),
+                filled: true,
+              ),
+              obscureText: true,
             ),
             ElevatedButton(
                 onPressed: () {
-                  if(_usernameController.text != "" && _passwordController.text != ""){
+                  if(_usernameController.text != "" && _passwordController.text != "" && _passwordConfirmController.text != ""){
+                    if(_passwordController.text != _passwordConfirmController.text){
+                      _showErrorDialog("Passwords do not match.");
+                      return;
+                    }
                     _signup(context, _usernameController.text, _passwordController.text);
                   }
                   },
