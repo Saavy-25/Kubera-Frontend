@@ -138,6 +138,7 @@ class FlaskService {
     }
   }
 
+// Not used
   Future<StoreProduct> fetchProduct(String productId) async {
     final response = await http.get(Uri.parse('$baseUrl/get_productDetails/$productId'));
 
