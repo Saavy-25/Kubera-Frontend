@@ -64,6 +64,14 @@ class ItemDetailsCard extends StatelessWidget {
                         color: Colors.grey,
                       ),
                     )
+                  else if (dateDiff == 0)
+                    const Text(
+                      'Last reported today',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey,
+                      ),
+                    )
                   else
                     const Text(
                       'Date not available',
