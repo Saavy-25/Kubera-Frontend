@@ -59,7 +59,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return Scaffold(
       appBar: AppBar(title: const Text("Kubera")),
       body: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(24.0),
         child: Column(
           children: [
             const SizedBox(height: 16),
@@ -103,6 +103,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
               obscureText: true,
             ),
+            const SizedBox(height: 16),
             ElevatedButton(
                 onPressed: () {
                   if(_usernameController.text != "" && _passwordController.text != "" && _passwordConfirmController.text != ""){

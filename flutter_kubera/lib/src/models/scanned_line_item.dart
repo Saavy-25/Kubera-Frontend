@@ -22,23 +22,6 @@ class ScannedLineItem {
     required this.genericMatches,
     this.genericMatch = '',
   });
-
-  // Method to update the fields
-  void updateLineItem(String newLineItem) {
-    lineItem = newLineItem;
-  }
-
-  void updateProductName(String storeProductName) {
-    this.storeProductName = storeProductName;
-  }
-
-  void updatePrice(double totalPrice) {
-    this.totalPrice = totalPrice;
-  }
-
-  void updateGenericMatch(String newGenericMatch) {
-    genericMatch = newGenericMatch;
-  }
   
   factory ScannedLineItem.fromJson(Map<String, dynamic> json) {
     var genericMatchesFromJson = json['genericMatches'] as List? ?? [];
