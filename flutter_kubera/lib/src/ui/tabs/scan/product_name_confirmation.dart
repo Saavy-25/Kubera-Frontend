@@ -188,23 +188,28 @@ class _ProductNameConfirmationScreenState extends State<ProductNameConfirmationS
                     itemCount: widget.scannedReceipt.scannedLineItems.length,
                     itemBuilder: (context, index) {
                       final product = widget.scannedReceipt.scannedLineItems[index];
-                      return StoreProductCard(
-                        scannedLineItem: product,
-                        onLineItemChanged: (value) {
+
+                      return Dismissible(
+                        key: Key(product.lineItem), // Use a unique key for each product
+                        direction: DismissDirection.endToStart,
+                        background: Container(
+                          color: Colors.red,
+                          alignment: Alignment.centerRight,
+                          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                          child: const Icon(Icons.delete, color: Colors.white),
+                        ),
+                        onDismissed: (direction) {
                           setState(() {
-                            product.updateLineItem(value);
+                            widget.scannedReceipt.scannedLineItems.removeAt(index); // Remove the product
                           });
+
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('${product.storeProductName} deleted')),
+                          );
                         },
-                        onProductNameChanged: (value) {
-                          setState(() {
-                            product.updateProductName(value);
-                          });
-                        },
-                        onPriceChanged: (value) {
-                          setState(() {
-                            product.updatePrice(value);
-                          });
-                        },
+                        child: StoreProductCard(
+                          scannedLineItem: product
+                        ),
                       );
                     },
                   ),

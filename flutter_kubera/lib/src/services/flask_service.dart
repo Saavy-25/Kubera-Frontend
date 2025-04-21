@@ -19,9 +19,6 @@ class FlaskService {
   // when running on physical device use the ip address of the machine running the server (i.e your laptop )
   //static const String baseUrl = 'http://10.138.9.86:8000/flutter';
 
-  // when running on emulator/dev use the following
-  // static const String baseUrl = 'https://kubera-avbyczbee5fybnht.eastus2-01.azurewebsites.net/flutter';
-
   // when running on PROD use the following
   static const String baseUrl = 'https://kubera-avbyczbee5fybnht.eastus2-01.azurewebsites.net/flutter';
 
