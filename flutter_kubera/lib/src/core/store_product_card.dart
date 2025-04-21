@@ -3,9 +3,6 @@ import 'package:flutter_kubera/src/models/scanned_line_item.dart';
 
 class StoreProductCard extends StatefulWidget {
   final ScannedLineItem scannedLineItem;
-  final ValueChanged<String> onLineItemChanged;
-  final ValueChanged<String> onProductNameChanged;
-  final ValueChanged<double> onPriceChanged;
 
   final String? overhead;
   final String? subtitle;
@@ -23,9 +20,6 @@ class StoreProductCard extends StatefulWidget {
   const StoreProductCard({
     Key? key,
     required this.scannedLineItem,
-    required this.onLineItemChanged,
-    required this.onProductNameChanged,
-    required this.onPriceChanged,
     this.overhead,
     this.subtitle,
     this.onTap,
@@ -44,6 +38,25 @@ class StoreProductCard extends StatefulWidget {
 
 class StoreProductCardState extends State<StoreProductCard> {
   bool _isEditing = false;
+  late TextEditingController _lineItemController;
+  late TextEditingController _productNameController;
+  late TextEditingController _priceController;
+
+  @override
+  void initState() {
+    super.initState();
+    _lineItemController = TextEditingController(text: widget.scannedLineItem.lineItem);
+    _productNameController = TextEditingController(text: widget.scannedLineItem.storeProductName);
+    _priceController = TextEditingController(text: widget.scannedLineItem.totalPrice.toString());
+  }
+
+  @override
+  void dispose() {
+    _lineItemController.dispose();
+    _productNameController.dispose();
+    _priceController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,36 +77,48 @@ class StoreProductCardState extends State<StoreProductCard> {
                   children: [
                     if (_isEditing) ...[
                       TextField(
-                        controller: TextEditingController(text: widget.scannedLineItem.lineItem),
+                        controller: _lineItemController,
                         decoration: const InputDecoration(labelText: 'Line Item'),
-                        onChanged: widget.onLineItemChanged,
+                        onChanged: (value) {
+                          setState(() {
+                            widget.scannedLineItem.lineItem = value;
+                          });
+                        },
                       ),
                       TextField(
-                        controller: TextEditingController(text: widget.scannedLineItem.storeProductName),
+                        controller: _productNameController,
                         decoration: const InputDecoration(labelText: 'Product Name'),
-                        onChanged: widget.onProductNameChanged,
+                        onChanged: (value) {
+                          setState(() {
+                            widget.scannedLineItem.storeProductName = value;
+                          });
+                        },
                       ),
                       TextField(
-                        controller: TextEditingController(text: widget.scannedLineItem.totalPrice.toString()),
+                        controller: _priceController,
                         decoration: const InputDecoration(labelText: 'Price'),
                         keyboardType: TextInputType.number,
-                        onChanged: (value) => widget.onPriceChanged(double.tryParse(value) ?? 0.0),
+                        onChanged: (value) {
+                          setState(() {
+                            widget.scannedLineItem.totalPrice = double.tryParse(value) ?? 0.0;
+                          });
+                        },
                       ),
                     ] else ...[
                       Text(
                         '${widget.scannedLineItem.storeProductName}',
-                        style: TextStyle(fontSize: 16),
+                        style: const TextStyle(fontSize: 16),
                         overflow: TextOverflow.ellipsis,
                       ),
                       Text(
                         '${widget.scannedLineItem.lineItem}',
-                        style: TextStyle(fontSize: 14, color: Colors.grey),
+                        style: const TextStyle(fontSize: 14, color: Colors.grey),
                         overflow: TextOverflow.ellipsis,
                       ),
                       Text(
                         '\$${widget.scannedLineItem.totalPrice}',
-                        style: TextStyle(fontSize: 14, color: Colors.grey),
-                          overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(fontSize: 14, color: Colors.grey),
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ],
