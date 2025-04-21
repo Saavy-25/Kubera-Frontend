@@ -97,10 +97,10 @@ class StoreProductCardState extends State<StoreProductCard> {
                       TextField(
                         controller: _priceController,
                         decoration: const InputDecoration(labelText: 'Price'),
-                        keyboardType: TextInputType.number,
+                        keyboardType: TextInputType.numberWithOptions(decimal: true),
                         onChanged: (value) {
                           setState(() {
-                            widget.scannedLineItem.totalPrice = double.tryParse(value) ?? 0.0;
+                            widget.scannedLineItem.totalPrice = double.tryParse(value) ?? 0.0; 
                           });
                         },
                       ),
@@ -116,7 +116,7 @@ class StoreProductCardState extends State<StoreProductCard> {
                         overflow: TextOverflow.ellipsis,
                       ),
                       Text(
-                        '\$${widget.scannedLineItem.totalPrice}',
+                        '\$${widget.scannedLineItem.totalPrice.toStringAsFixed(2)}',
                         style: const TextStyle(fontSize: 14, color: Colors.grey),
                         overflow: TextOverflow.ellipsis,
                       ),
