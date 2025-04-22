@@ -98,7 +98,8 @@ class _ReceiptsDetailsScreenState extends State<ReceiptsDetailsScreen> {
                   }
 
                   final productNames = snapshot.data!;
-                  return ListView.builder(
+                  return Expanded(
+                    child: ListView.builder(
                     itemCount: widget.receipt.lineItems.length,
                     itemBuilder: (context, index) {
                       final lineItem = widget.receipt.lineItems[index];
@@ -110,32 +111,47 @@ class _ReceiptsDetailsScreenState extends State<ReceiptsDetailsScreen> {
                         child: Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  productName,
+                                  style: const TextStyle(fontSize: 16),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                const SizedBox(height: 8),
+                                Row(
+                                  children: [
+                                  const SizedBox(width: 4),
+                                    Expanded(
+                                      child: Text(
+                                      'Count: ${lineItem.count}',
+                                      style: const TextStyle(fontSize: 16),
+                                      overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          Column(
                             children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    productName,
-                                    style: Theme.of(context).textTheme.bodyMedium,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    'Count: ${lineItem.count}',
-                                    style: Theme.of(context).textTheme.bodySmall,
-                                  ),
-                                ],
-                              ),
                               Text(
                                 '\$${lineItem.pricePerCount}',
-                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
+                                style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
                               ),
                             ],
                           ),
+                        ],
+                      ),
                         ),
                       );
                     },
+                  )
                   );
                 },
               ),
