@@ -64,23 +64,41 @@ class StoreProductCardState extends State<StoreProductCard> {
                   children: [
                     if (_isEditing) ...[
                       TextField(
+<<<<<<< Updated upstream
                         controller: TextEditingController(text: widget.scannedLineItem.lineItem),
                         decoration: const InputDecoration(labelText: 'Line Item'),
                         onChanged: widget.onLineItemChanged,
                       ),
                       TextField(
                         controller: TextEditingController(text: widget.scannedLineItem.storeProductName),
+=======
+                        controller: _productNameController,
+>>>>>>> Stashed changes
                         decoration: const InputDecoration(labelText: 'Product Name'),
                         onChanged: widget.onProductNameChanged,
                       ),
                       TextField(
+<<<<<<< Updated upstream
                         controller: TextEditingController(text: widget.scannedLineItem.totalPrice.toString()),
+=======
+                        controller: _lineItemController,
+                        decoration: const InputDecoration(labelText: 'Line Item'),
+                        onChanged: (value) {
+                          setState(() {
+                            widget.scannedLineItem.lineItem = value;
+                          });
+                        },
+                      ),
+                      TextField(
+                        controller: _priceController,
+>>>>>>> Stashed changes
                         decoration: const InputDecoration(labelText: 'Price'),
                         keyboardType: TextInputType.number,
                         onChanged: (value) => widget.onPriceChanged(double.tryParse(value) ?? 0.0),
                       ),
                     ] else ...[
                       Text(
+<<<<<<< Updated upstream
                         '${widget.scannedLineItem.storeProductName}',
                         style: TextStyle(fontSize: 16),
                         overflow: TextOverflow.ellipsis,
@@ -88,6 +106,15 @@ class StoreProductCardState extends State<StoreProductCard> {
                       Text(
                         '${widget.scannedLineItem.lineItem}',
                         style: TextStyle(fontSize: 14, color: Colors.grey),
+=======
+                        widget.scannedLineItem.storeProductName,
+                        style: const TextStyle(fontSize: 16),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      Text(
+                        widget.scannedLineItem.lineItem,
+                        style: const TextStyle(fontSize: 14, color: Colors.grey),
+>>>>>>> Stashed changes
                         overflow: TextOverflow.ellipsis,
                       ),
                       Text(
