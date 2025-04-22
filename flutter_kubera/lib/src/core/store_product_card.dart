@@ -77,20 +77,20 @@ class StoreProductCardState extends State<StoreProductCard> {
                   children: [
                     if (_isEditing) ...[
                       TextField(
-                        controller: _lineItemController,
-                        decoration: const InputDecoration(labelText: 'Line Item'),
-                        onChanged: (value) {
-                          setState(() {
-                            widget.scannedLineItem.lineItem = value;
-                          });
-                        },
-                      ),
-                      TextField(
                         controller: _productNameController,
                         decoration: const InputDecoration(labelText: 'Product Name'),
                         onChanged: (value) {
                           setState(() {
                             widget.scannedLineItem.storeProductName = value;
+                          });
+                        },
+                      ),
+                      TextField(
+                        controller: _lineItemController,
+                        decoration: const InputDecoration(labelText: 'Line Item'),
+                        onChanged: (value) {
+                          setState(() {
+                            widget.scannedLineItem.lineItem = value;
                           });
                         },
                       ),
@@ -106,13 +106,12 @@ class StoreProductCardState extends State<StoreProductCard> {
                       ),
                     ] else ...[
                       Text(
-<<<<<<< Updated upstream
-                        '${widget.scannedLineItem.storeProductName}',
+                        widget.scannedLineItem.storeProductName,
                         style: const TextStyle(fontSize: 16),
                         overflow: TextOverflow.ellipsis,
                       ),
                       Text(
-                        '${widget.scannedLineItem.lineItem}',
+                        widget.scannedLineItem.lineItem,
                         style: const TextStyle(fontSize: 14, color: Colors.grey),
                         overflow: TextOverflow.ellipsis,
                       ),
