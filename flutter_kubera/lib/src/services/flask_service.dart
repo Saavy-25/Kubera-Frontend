@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_kubera/src/models/dashboard.dart';
+import 'package:flutter_kubera/src/models/receipt.dart';
 import 'package:flutter_kubera/src/models/scanned_receipt.dart';
 import 'package:flutter_kubera/src/models/scanned_line_item.dart';
 import 'package:flutter_kubera/src/models/shopping_list.dart';
@@ -17,10 +18,10 @@ import 'package:provider/provider.dart';
 
 class FlaskService {
   // when running on physical device use the ip address of the machine running the server (i.e your laptop )
-  //static const String baseUrl = 'http://10.138.9.86:8000/flutter';
+  static const String baseUrl = 'http://192.168.0.222:8000/flutter';
 
   // when running on PROD use the following
-  static const String baseUrl = 'https://kubera-avbyczbee5fybnht.eastus2-01.azurewebsites.net/flutter';
+  // static const String baseUrl = 'https://kubera-avbyczbee5fybnht.eastus2-01.azurewebsites.net/flutter';
 
   Future<Test> fetchTest() async {
     final response = await http.get(Uri.parse('$baseUrl/get_data'));
@@ -98,6 +99,20 @@ class FlaskService {
     }
     if (response.statusCode != 200) {
       throw Exception('Failed to send receipt: ${response.statusCode}');
+    }
+  }
+
+  Future<List<Receipt>> fetchReceipts(BuildContext context) async {
+    final response = await http.get(Uri.parse(
+      '$baseUrl/get_receipts'), 
+      headers: userCookieHeader(context),
+    );
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(response.body);
+      return List<Receipt>.from(data.map((item) => Receipt.fromJson(item)));
+    } else {
+      throw Exception('Failed to get user''s receipts');
     }
   }
 
