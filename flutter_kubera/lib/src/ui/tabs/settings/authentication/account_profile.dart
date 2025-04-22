@@ -93,7 +93,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           const SizedBox(height: 8),
           ElevatedButton(
             onPressed: () => _navigateToReceiptsList(context),
-            child: Text('My receipts'),
+            child: Text('My Receipts'),
           ),
         ] else
           Row(
