@@ -118,6 +118,7 @@ class _ReceiptsDetailsScreenState extends State<ReceiptsDetailsScreen> {
                                   Text(
                                     productName,
                                     style: Theme.of(context).textTheme.bodyMedium,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
