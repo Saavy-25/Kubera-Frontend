@@ -151,13 +151,12 @@ class FlaskService {
     }
   }
 
-// Not used
-  Future<StoreProduct> fetchProduct(String productId) async {
+  Future<Map<String, dynamic>> fetchProductJson(String productId) async {
     final response = await http.get(Uri.parse('$baseUrl/get_productDetails/$productId'));
 
     if (response.statusCode == 200) {
       final productJson = jsonDecode(response.body);
-      return StoreProduct.fromJson(productJson);
+      return productJson;
     } else {
       throw Exception('Failed to fetch product');
     }

@@ -21,12 +21,12 @@ class _ReceiptsListScreenState extends State<ReceiptsListScreen> {
   }
 
   void _navigateToReceiptDetails(Receipt receipt) {
-    // Navigator.push(
-    //   context,
-    //   MaterialPageRoute(
-    //     builder: (context) => ReceiptsDetailsScreen(receipt: receipt),
-    //   ),
-    // );
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ReceiptsDetailsScreen(receipt: receipt),
+      ),
+    );
   }
 
   @override
