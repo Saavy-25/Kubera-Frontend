@@ -36,7 +36,7 @@ class ReceiptCard extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 'Total: \$${receipt.totalReceiptPrice.toStringAsFixed(2)}',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.green),
+                style: Theme.of(context).textTheme.bodyMedium,
               ),
             ],
           ),
