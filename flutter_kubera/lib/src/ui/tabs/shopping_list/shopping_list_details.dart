@@ -53,9 +53,6 @@ class _ShoppingListDetailsState extends State<ShoppingListDetails> {
   Future<void> _toggleListItem(BuildContext context, String listId, String productId) async {
     try {
       await FlaskService().toggleListItem(listId, productId);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Product toggled')),
-      );
       _refreshShoppingList();
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -85,9 +82,12 @@ class _ShoppingListDetailsState extends State<ShoppingListDetails> {
               child: ListTile(
                 title: Text(
                   item.productName,
-                  style: const TextStyle(
+                  style: item.retrieved ? TextStyle(
+                    color: Colors.grey,
                     fontSize: 16,
-                    fontWeight: FontWeight.bold,
+                  ) : TextStyle(
+                    color: Colors.black,
+                    fontSize: 16,
                   ),
                 ),
                 // subtitle: Text('${item.storeName} - ${item.price}'), TODO: query product to get price

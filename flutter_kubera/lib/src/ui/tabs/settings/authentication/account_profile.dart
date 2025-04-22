@@ -91,6 +91,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 child: Text('Login'),
                               ),
                       ), 
+                      const SizedBox(width: 16),
                       Expanded(
                         child: ElevatedButton(
                                 onPressed: () => _navigateToSignUpPage(context),

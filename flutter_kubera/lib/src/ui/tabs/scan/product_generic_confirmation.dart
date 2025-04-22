@@ -221,7 +221,20 @@ class _GenericMatchDialogState extends State<GenericMatchDialog> {
                 });
               },
             );
-          }),
+          }).toList(),
+          RadioListTile<String>(
+            title: TextField(
+              controller: customOptionController,
+              decoration: const InputDecoration(labelText: 'Enter New'),
+            ),
+            value: customOptionController.text,
+            groupValue: selectedMatch,
+            onChanged: (String? value) {
+              setState(() {
+                selectedMatch = value;
+              });
+            },
+          ),
         ],
       ),
       actions: <Widget>[
