@@ -202,10 +202,6 @@ class _ProductNameConfirmationScreenState extends State<ProductNameConfirmationS
                           setState(() {
                             widget.scannedReceipt.scannedLineItems.removeAt(index); // Remove the product
                           });
-
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('${product.storeProductName} deleted')),
-                          );
                         },
                         child: StoreProductCard(
                           scannedLineItem: product
