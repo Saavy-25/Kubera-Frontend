@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_kubera/src/ui/tabs/settings/authentication/login.dart';
 import 'package:flutter_kubera/src/ui/tabs/settings/authentication/sign_up.dart';
 import 'package:provider/provider.dart';
-
+import 'package:flutter_kubera/src/ui/tabs/settings/receipts/receipts_list_screen.dart';
 import 'package:flutter_kubera/src/models/test.dart';
 import '../../../../services/flask_service.dart';
 import 'package:flutter_kubera/src/core/error_dialog.dart';
@@ -52,6 +52,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  void _navigateToReceiptsList(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const ReceiptsListScreen(), // Navigate to the receipts screen
+      ),
+    );
+  }
+
   // Show error dialog
   void _showErrorDialog(String message) {
     showDialog(
@@ -64,43 +73,48 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return 
-        Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Welcome, ${context.read<AuthState>().username()}!',
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Welcome, ${context.read<AuthState>().username()}!',
+          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+        ),
+        const SizedBox(height: 16),
+        if (context.read<AuthState>().isAuthorized) ...[
+          ElevatedButton(
+            onPressed: () {
+              _logout(context);
+            },
+            child: Text('Logout'),
+          ),
+          const SizedBox(height: 8),
+          ElevatedButton(
+            onPressed: () => _navigateToReceiptsList(context),
+            child: Text('My Receipts'),
+          ),
+        ] else
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () => _navigateToLoginPage(context),
+                  child: Text('Login'),
                 ),
-                const SizedBox(height: 16),
-                context.read<AuthState>().isAuthorized
-                ? ElevatedButton(
-                    onPressed: () {
-                    _logout(context);
-                    },
-                    child: Text('Logout'),
-                  ) 
-                  : Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded( // https://api.flutter.dev/flutter/widgets/Expanded-class.html
-                        child: ElevatedButton(
-                                onPressed: () => _navigateToLoginPage(context),
-                                child: Text('Login'),
-                              ),
-                      ), 
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: ElevatedButton(
-                                onPressed: () => _navigateToSignUpPage(context),
-                                child: Text('Sign Up'),
-                                )
-                      )
-                    ]
-                  )
-              ]
-      );
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () => _navigateToSignUpPage(context),
+                  child: Text('Sign Up'),
+                ),
+              ),
+            ],
+          ),
+      ],
+    );
   }
 }

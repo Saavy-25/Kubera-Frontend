@@ -5,7 +5,6 @@ import 'settings_controller.dart';
 import 'settings_theme_dropdown.dart';
 import 'auth_provider.dart';
 
-
 class SettingsScreen extends StatelessWidget {
   final SettingsController settingsController;
 
@@ -13,7 +12,6 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Consumer<AuthState>(
       builder: (context, authState, child) {
         return Scaffold(
@@ -34,7 +32,7 @@ class SettingsScreen extends StatelessWidget {
                       ),
                 ),
                 const SizedBox(height: 16),
-                //Shows themes
+                // Shows themes
                 SettingsThemeDropdown(controller: settingsController),
               ],
             ),

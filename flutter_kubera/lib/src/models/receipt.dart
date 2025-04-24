@@ -1,5 +1,5 @@
 class LineItem {
-  double pricePerCount;
+  String pricePerCount;
   String storeProductId;
   int count;
 
@@ -11,7 +11,7 @@ class LineItem {
 
   factory LineItem.fromJson(Map<String, dynamic> json) {
     return LineItem(
-      pricePerCount: json['pricePerCount'] ?? 0.0,
+      pricePerCount: json['pricePerCount'] ?? '',
       storeProductId: json['storeProductId'] ?? '',
       count: json['count'] ?? 1,
     );
@@ -33,7 +33,7 @@ class Receipt {
   final String storeAddress;
   String date;
   final double totalReceiptPrice;
-  List<LineItem> products;
+  List<LineItem> lineItems;
 
   Receipt({
     required this.id,
@@ -41,11 +41,11 @@ class Receipt {
     required this.storeAddress,
     required this.date,
     required this.totalReceiptPrice,
-    required this.products
+    required this.lineItems
   });
 
   static Receipt empty() {
-    return Receipt(id: '', storeName: '', storeAddress: '', date: '', totalReceiptPrice: 0.0, products: []);
+    return Receipt(id: '', storeName: '', storeAddress: '', date: '', totalReceiptPrice: 0.0, lineItems: []);
   }
 
   void updateStoreName(String newStoreName) {
@@ -58,8 +58,8 @@ class Receipt {
   }
 
   factory Receipt.fromJson(Map<String, dynamic> json) {
-    var productsFromJson = json['products'] as List? ?? [];
-    List<LineItem> productList = productsFromJson.map((productJson) => LineItem.fromJson(productJson)).toList();
+    var lineItemsFromJson = json['scannedLineItems'] as List? ?? [];
+    List<LineItem> lineItemsList = lineItemsFromJson.map((lineItem) => LineItem.fromJson(lineItem)).toList();
 
     return Receipt(
       id: json['_id'] ?? '',
@@ -67,7 +67,7 @@ class Receipt {
       storeAddress: json['storeAddress'] ?? '',
       date: json['date']  ?? '',
       totalReceiptPrice: json['totalReceiptPrice']  ?? 0.0,
-      products: productList
+      lineItems: lineItemsList
     );
   }
 
@@ -78,7 +78,7 @@ class Receipt {
       'storeAddress': storeAddress,
       'date': date,
       'totalReceiptPrice': totalReceiptPrice,
-      'products': products.map((product) => product.toJson()).toList(),
+      'scannedLineItems': lineItems.map((lineItem) => lineItem.toJson()).toList(),
     };
   }
 }
